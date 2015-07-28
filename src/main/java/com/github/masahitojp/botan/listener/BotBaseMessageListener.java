@@ -17,7 +17,6 @@ public interface BotBaseMessageListener extends MessageListener {
     void doSomething(String body);
 
     default public void processMessage(Message message) {
-        System.out.println("Received message: " + message);
         final String body = message.getBody();
         if (body != null) {
             if(executionCondition(body)) {

@@ -22,25 +22,32 @@ public class Botan {
     private final List<BotBaseMessageListener> listeners;
     private final AtomicBoolean flag = new AtomicBoolean(true);
 
-    static class Builder {
+    public static Builder builder(final BotanAdapter adapter) {
+        return new Builder(adapter);
+    }
+
+    public static class Builder {
         private BotanAdapter adapter;
         private List<BotBaseMessageListener> listeners = new ArrayList<>();
 
-        Builder(final BotanAdapter adapter) {
+        private Builder() {
+        }
+
+        private Builder(final BotanAdapter adapter) {
             this.adapter = adapter;
         }
 
         @SuppressWarnings("unused")
-        Builder listeners(final List<BotBaseMessageListener> listeners) {
+        public Builder listeners(final List<BotBaseMessageListener> listeners) {
             this.listeners = listeners;
             return this;
         }
-        Botan build() {
+        public Botan build() {
             return new Botan(this);
         }
     }
 
-    public Botan(final Builder builder) {
+    private Botan(final Builder builder) {
         this.adapter = builder.adapter;
         this.listeners = builder.listeners;
     }
