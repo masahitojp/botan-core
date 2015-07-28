@@ -66,7 +66,6 @@ public class Botan {
             this.listeners.forEach(muc::addMessageListener);
 
             muc.join(adapter.getNickName(), adapter.getPassword());
-            muc.sendMessage("connected at " + System.currentTimeMillis());
 
             while(flag.get()) {
                 Thread.sleep(1000L);
