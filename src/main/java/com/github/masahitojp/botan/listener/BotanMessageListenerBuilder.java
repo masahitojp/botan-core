@@ -1,7 +1,6 @@
 package com.github.masahitojp.botan.listener;
 
 import com.github.masahitojp.botan.Botan;
-import java.util.function.Consumer;
 
 public class BotanMessageListenerBuilder {
 

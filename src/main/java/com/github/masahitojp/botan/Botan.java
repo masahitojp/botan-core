@@ -24,21 +24,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Botan {
 
-    public Botan setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    private String name = "botan";
+    private static String DEFAULT_NAME = "botan";
+    private String name = DEFAULT_NAME;
     private final BotanAdapter adapter;
 
-    public List<BotanMessageListener> getListeners() {
-        return listeners;
-    }
 
     private List<BotanMessageListener> listeners = new ArrayList<>();
     private final AtomicBoolean flag = new AtomicBoolean(true);
@@ -48,6 +37,19 @@ public class Botan {
 
     public Botan(final BotanAdapter adapter) {
         this.adapter = adapter;
+    }
+
+    public final Botan setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public final String getName() {
+        return name;
+    }
+
+    public final List<BotanMessageListener> getListeners() {
+        return listeners;
     }
 
 
