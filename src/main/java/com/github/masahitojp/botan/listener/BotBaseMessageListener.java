@@ -14,10 +14,20 @@ import java.util.regex.Pattern;
 
 public abstract class BotBaseMessageListener implements MessageListener, ChatMessageListener {
 
-    private String description;
-    private Pattern pattern;
+    protected String description;
+    protected Pattern pattern;
 
     public AtomicReference<MultiUserChat> muc = new AtomicReference<>();
+
+
+
+    public final void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public final void SetPattern(final String str) {
+        this.pattern = Pattern.compile(str);
+    }
 
     public void doSomething(BotanMessage message) {
         // have to implement

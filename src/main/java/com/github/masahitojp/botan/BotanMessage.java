@@ -6,10 +6,7 @@ import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
-/**
- * Created by masahito on 15/08/06.
- */
-public class BotanMessage {
+public final class BotanMessage {
     private Chat chat;
     private MultiUserChat muc;
     private final Message message;
@@ -23,7 +20,7 @@ public class BotanMessage {
         this.message = message;
     }
 
-    public void reply(final String body) throws BotanException {
+    public final void reply(final String body) throws BotanException {
         try {
             // Todo : コンストラクタでnullが割り当てられないようにする
             if (chat != null)  {
@@ -36,5 +33,14 @@ public class BotanMessage {
         } catch (SmackException.NotConnectedException e) {
             throw new BotanException(e);
         }
+    }
+
+
+    public final String getBody() {
+        return message.getBody();
+    }
+
+    public final String getFrom() {
+        return message.getFrom();
     }
 }
