@@ -2,7 +2,9 @@ package com.github.masahitojp.botan;
 
 import com.github.masahitojp.botan.adapter.BotanAdapter;
 import com.github.masahitojp.botan.exception.BotanException;
-import com.github.masahitojp.botan.listener.BotBaseMessageListener;
+import com.github.masahitojp.botan.listener.BotanMessageListener;
+import com.github.masahitojp.botan.listener.BotanMessageListenerBuilder;
+import com.github.masahitojp.botan.listener.BotanMessageListenerSetter;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -11,53 +13,81 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.reflections.Reflections;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Botan {
 
+    public Botan setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private String name = "botan";
     private final BotanAdapter adapter;
-    private final List<BotBaseMessageListener> listeners;
+
+    public List<BotanMessageListener> getListeners() {
+        return listeners;
+    }
+
+    private List<BotanMessageListener> listeners = new ArrayList<>();
     private final AtomicBoolean flag = new AtomicBoolean(true);
 
-    public static Builder builder(final BotanAdapter adapter) {
-        return new Builder(adapter);
+    public AtomicReference<MultiUserChat> muc = new AtomicReference<>();
+
+
+    public Botan(final BotanAdapter adapter) {
+        this.adapter = adapter;
     }
 
-    public static class Builder {
-        private BotanAdapter adapter;
-        private List<BotBaseMessageListener> listeners = new ArrayList<>();
 
-        private Builder() {
-        }
-
-        private Builder(final BotanAdapter adapter) {
-            this.adapter = adapter;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder listeners(final List<BotBaseMessageListener> listeners) {
-            this.listeners = listeners;
-            return this;
-        }
-        public Botan build() {
-            return new Botan(this);
-        }
+    public void run() {
+        setListeners();
     }
 
-    private Botan(final Builder builder) {
-        this.adapter = builder.adapter;
-        this.listeners = builder.listeners;
+    private void setListeners() {
+        final Reflections reflections = new Reflections();
+        Set<Class<? extends BotanMessageListenerSetter>> classes = reflections.getSubTypesOf(BotanMessageListenerSetter.class);
+        classes.forEach(clazz -> {
+            try {
+                listeners.add(BotanMessageListenerBuilder.build(this, clazz.newInstance()));
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void bind(AbstractXMPPConnection connection) {
-        final ChatManager cm = ChatManager.getInstanceFor(connection);
 
-        // private message listener
-        cm.addChatListener((chat, message) -> this.listeners.forEach(chat::addMessageListener));
+        try {
+            final ChatManager cm = ChatManager.getInstanceFor(connection);
+
+            // private message listener
+            cm.addChatListener((chat, message) -> this.listeners.forEach(chat::addMessageListener));
+
+
+            final MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
+            final MultiUserChat muc = mucm.getMultiUserChat(adapter.getRoomJabberId());
+
+            muc.join(adapter.getNickName(), adapter.getPassword());
+
+
+            // set listeners
+            this.listeners.forEach(muc::addMessageListener);
+            this.muc.set(muc);
+        } catch (XMPPException.XMPPErrorException | SmackException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -73,20 +103,6 @@ public class Botan {
         try {
             connection.connect();
             connection.login(adapter.getNickName(), adapter.getPassword());
-
-            final MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
-            final MultiUserChat muc = mucm.getMultiUserChat(adapter.getRoomJabberId());
-
-
-
-            // set listeners
-            this.listeners.forEach(muc::addMessageListener);
-            for (final BotBaseMessageListener listener: this.listeners) {
-                listener.muc.set(muc);
-            }
-
-            muc.join(adapter.getNickName(), adapter.getPassword());
-
             bind(connection);
 
             while(flag.get()) {
