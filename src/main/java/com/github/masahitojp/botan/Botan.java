@@ -6,6 +6,10 @@ import com.github.masahitojp.botan.listener.BotBaseMessageListener;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManager;
+import org.jivesoftware.smack.chat.ChatMessageListener;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -52,6 +56,13 @@ public class Botan {
         this.listeners = builder.listeners;
     }
 
+    private void bind(AbstractXMPPConnection connection) {
+        final ChatManager cm = ChatManager.getInstanceFor(connection);
+
+        // private message listener
+        cm.addChatListener((chat, message) -> this.listeners.forEach(chat::addMessageListener));
+    }
+
 
     public void start() throws BotanException {
 
@@ -65,14 +76,21 @@ public class Botan {
         try {
             connection.connect();
             connection.login(adapter.getNickName(), adapter.getPassword());
+
             final MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
             final MultiUserChat muc = mucm.getMultiUserChat(adapter.getRoomJabberId());
 
+
+
             // set listeners
-            BotBaseMessageListener.muc.set(muc);
             this.listeners.forEach(muc::addMessageListener);
+            for (final BotBaseMessageListener listener: this.listeners) {
+                listener.muc.set(muc);
+            }
 
             muc.join(adapter.getNickName(), adapter.getPassword());
+
+            bind(connection);
 
             while(flag.get()) {
                 Thread.sleep(1000L);
