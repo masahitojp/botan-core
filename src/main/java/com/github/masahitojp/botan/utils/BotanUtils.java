@@ -29,10 +29,10 @@ public class BotanUtils {
 
             @Override
             public void accept(BotanMessageListener botanMessageListener) {
+                botanMessageListener.setAllReceived(true);
                 botanMessageListener.setDescription(description);
                 botanMessageListener.setPattern(pattern);
                 botanMessageListener.setAction(action);
-                botanMessageListener.setAllReceived(false);
             }
         });
     }
@@ -51,10 +51,10 @@ public class BotanUtils {
 
             @Override
             public void accept(BotanMessageListener botanMessageListener) {
+                botanMessageListener.setAllReceived(false);
                 botanMessageListener.setDescription(description);
                 botanMessageListener.setPattern(pattern);
                 botanMessageListener.setAction(action);
-                botanMessageListener.setAllReceived(true);
             }
         });
     }
