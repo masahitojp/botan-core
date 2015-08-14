@@ -6,18 +6,27 @@ import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
+import java.util.Optional;
+
 public final class BotanMessage {
     private Chat chat;
     private MultiUserChat muc;
     private final Message message;
+    private final Botan botan;
 
-    public BotanMessage(final Chat chat, final Message message) {
+    public BotanMessage(final Botan botan, final Chat chat, final Message message) {
+        this.botan = botan;
         this.chat = chat;
         this.message = message;
     }
-    public BotanMessage(final MultiUserChat muc, final Message message) {
+    public BotanMessage(final Botan botan, final MultiUserChat muc, final Message message) {
+        this.botan = botan;
         this.muc = muc;
         this.message = message;
+    }
+
+    public final String getRobotName() {
+        return this.botan.getName();
     }
 
     public final void reply(final String body) throws BotanException {
@@ -27,7 +36,12 @@ public final class BotanMessage {
                 this.chat.sendMessage(body);
             }
             else if (muc!=null) {
-                this.muc.sendMessage(body);
+                // 自分からのメッセージは受け取らないように変更
+                final Optional<String> messageFromOpt = Optional.of(message.getFrom());
+                final String[] s = messageFromOpt.orElse("").split("/");
+                if (s.length == 2 && !s[1].equals(botan.getName())) {
+                    this.muc.sendMessage(body);
+                }
             }
 
         } catch (SmackException.NotConnectedException e) {

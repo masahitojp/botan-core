@@ -4,7 +4,8 @@ import com.github.masahitojp.botan.adapter.BotanAdapter;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.listener.BotanMessageListener;
 import com.github.masahitojp.botan.listener.BotanMessageListenerBuilder;
-import com.github.masahitojp.botan.listener.BotanMessageListenerSetter;
+import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
+import com.github.masahitojp.botan.utils.BotanUtils;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -25,15 +26,12 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Botan {
 
     private static String DEFAULT_NAME = "botan";
+
     private String name = DEFAULT_NAME;
     private final BotanAdapter adapter;
-
-
     private List<BotanMessageListener> listeners = new ArrayList<>();
     private final AtomicBoolean flag = new AtomicBoolean(true);
-
     public AtomicReference<MultiUserChat> muc = new AtomicReference<>();
-
 
     public Botan(final BotanAdapter adapter) {
         this.adapter = adapter;
@@ -54,15 +52,16 @@ public class Botan {
 
 
     public void run() {
-        setListeners();
+        setActions();
+        BotanUtils.getActions().forEach(x -> listeners.add(BotanMessageListenerBuilder.build(this, x)));
     }
 
-    private void setListeners() {
+    private void setActions() {
         final Reflections reflections = new Reflections();
-        Set<Class<? extends BotanMessageListenerSetter>> classes = reflections.getSubTypesOf(BotanMessageListenerSetter.class);
+        Set<Class<? extends BotanMessageListenerRegister>> classes = reflections.getSubTypesOf(BotanMessageListenerRegister.class);
         classes.forEach(clazz -> {
             try {
-                listeners.add(BotanMessageListenerBuilder.build(this, clazz.newInstance()));
+                clazz.newInstance().register();
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -121,4 +120,6 @@ public class Botan {
     public void stop() {
         this.flag.set(false);
     }
+
+
 }
