@@ -23,11 +23,11 @@ public class BotanMessageListener implements MessageListener, ChatMessageListene
     private Consumer<BotanMessage> action;
     private boolean allReceived = false;
 
-    public Pattern getPattern() {
+    public final Pattern getPattern() {
         return pattern;
     }
 
-    public String getDescription() {
+    public final String getDescription() {
         return description;
     }
 
@@ -35,7 +35,7 @@ public class BotanMessageListener implements MessageListener, ChatMessageListene
         this.botan = botan;
     }
 
-    public List<BotanMessageListener> getListeners() {
+    public final List<BotanMessageListener> getListeners() {
         return botan.getListeners();
     }
 
@@ -57,7 +57,7 @@ public class BotanMessageListener implements MessageListener, ChatMessageListene
         this.pattern = Pattern.compile(pattern);
     }
 
-    public void setAllReceived(final boolean allReceived) {
+    public final void setAllReceived(final boolean allReceived) {
         this.allReceived = allReceived;
     }
 
@@ -69,7 +69,7 @@ public class BotanMessageListener implements MessageListener, ChatMessageListene
             final Matcher matcher = pattern.matcher(body);
             if (matcher.find()) {
                 if (chat != null) {
-                    action.accept(new BotanMessage(botan, chat, message));
+                    action.accept(new BotanMessage(botan, chat, message, matcher));
                 }
             }
         }
@@ -85,7 +85,7 @@ public class BotanMessageListener implements MessageListener, ChatMessageListene
             final Matcher matcher = pattern.matcher(body);
             if (matcher.find()) {
                 if (m != null && from.startsWith(m.getRoom())) {
-                    action.accept(new BotanMessage(botan, m, message));
+                    action.accept(new BotanMessage(botan, m, message, matcher));
                 }
             }
         }

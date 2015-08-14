@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Botan {
+public final class Botan {
 
     private static String DEFAULT_NAME = "botan";
 
@@ -51,9 +51,10 @@ public class Botan {
     }
 
 
-    public void run() {
+    public final Botan run() {
         setActions();
         BotanUtils.getActions().forEach(x -> listeners.add(BotanMessageListenerBuilder.build(this, x)));
+        return this;
     }
 
     private void setActions() {
@@ -92,7 +93,7 @@ public class Botan {
     }
 
 
-    public void start() throws BotanException {
+    public final void start() throws BotanException {
 
         final XMPPTCPConnectionConfiguration connConfig = XMPPTCPConnectionConfiguration
                 .builder()
@@ -117,7 +118,7 @@ public class Botan {
     }
 
     @SuppressWarnings("unused")
-    public void stop() {
+    public final void stop() {
         this.flag.set(false);
     }
 

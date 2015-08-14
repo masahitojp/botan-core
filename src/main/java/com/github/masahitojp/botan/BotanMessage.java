@@ -7,22 +7,26 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
 
 public final class BotanMessage {
     private Chat chat;
     private MultiUserChat muc;
     private final Message message;
     private final Botan botan;
+    private final Matcher matcher;
 
-    public BotanMessage(final Botan botan, final Chat chat, final Message message) {
+    public BotanMessage(final Botan botan, final Chat chat, final Message message, final Matcher matcher) {
         this.botan = botan;
         this.chat = chat;
         this.message = message;
+        this.matcher = matcher;
     }
-    public BotanMessage(final Botan botan, final MultiUserChat muc, final Message message) {
+    public BotanMessage(final Botan botan, final MultiUserChat muc, final Message message, final Matcher matcher) {
         this.botan = botan;
         this.muc = muc;
         this.message = message;
+        this.matcher = matcher;
     }
 
     public final String getRobotName() {
@@ -49,7 +53,9 @@ public final class BotanMessage {
         }
     }
 
-
+    public final Matcher getMatcher() {
+        return this.matcher;
+    }
     public final String getBody() {
         return message.getBody();
     }
