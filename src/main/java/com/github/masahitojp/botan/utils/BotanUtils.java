@@ -3,12 +3,15 @@ package com.github.masahitojp.botan.utils;
 import com.github.masahitojp.botan.BotanMessage;
 import com.github.masahitojp.botan.listener.BotanMessageListener;
 import com.github.masahitojp.botan.listener.BotanMessageListenerSetter;
+import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
-public class BotanUtils {
+@UtilityClass
+public final class BotanUtils {
     private static List<BotanMessageListenerSetter> actions = new ArrayList<>();
 
     public static List<BotanMessageListenerSetter> getActions() {
@@ -57,5 +60,10 @@ public class BotanUtils {
                 botanMessageListener.setAction(action);
             }
         });
+    }
+
+    public static <T> T getRandom(final List<T> list) {
+        int index = new Random().nextInt(list.size());
+        return list.get(index);
     }
 }

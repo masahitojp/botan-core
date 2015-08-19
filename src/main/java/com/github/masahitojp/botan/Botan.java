@@ -24,23 +24,39 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class Botan {
-
-    private static String DEFAULT_NAME = "botan";
-
-    private String name = DEFAULT_NAME;
+    private final String name;
     private final BotanAdapter adapter;
     private List<BotanMessageListener> listeners = new ArrayList<>();
     private final AtomicBoolean flag = new AtomicBoolean(true);
     public AtomicReference<MultiUserChat> muc = new AtomicReference<>();
 
-    public Botan(final BotanAdapter adapter) {
-        this.adapter = adapter;
+
+    public static class BotanBuilder {
+        private static String DEFAULT_NAME = "botan";
+        private String name = DEFAULT_NAME;
+        private final BotanAdapter adapter;
+
+        public BotanBuilder(final BotanAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+
+        public final BotanBuilder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public final Botan build() {
+            return new Botan(this).run();
+        }
     }
 
-    public final Botan setName(String name) {
-        this.name = name;
-        return this;
+    private Botan(final BotanBuilder builder)
+    {
+        this.adapter = builder.adapter;
+        this.name = builder.name;
     }
+
 
     public final String getName() {
         return name;
@@ -51,7 +67,7 @@ public final class Botan {
     }
 
 
-    public final Botan run() {
+    private Botan run() {
         setActions();
         BotanUtils.getActions().forEach(x -> listeners.add(BotanMessageListenerBuilder.build(this, x)));
         return this;
@@ -107,7 +123,7 @@ public final class Botan {
             connection.login(adapter.getNickName(), adapter.getPassword());
             bind(connection);
 
-            while(flag.get()) {
+            while (flag.get()) {
                 Thread.sleep(1000L);
             }
         } catch (final XMPPException | SmackException | IOException | InterruptedException e) {

@@ -22,6 +22,7 @@ public final class BotanMessage {
         this.message = message;
         this.matcher = matcher;
     }
+
     public BotanMessage(final Botan botan, final MultiUserChat muc, final Message message, final Matcher matcher) {
         this.botan = botan;
         this.muc = muc;
@@ -36,10 +37,9 @@ public final class BotanMessage {
     public final void reply(final String body) throws BotanException {
         try {
             // Todo : コンストラクタでnullが割り当てられないようにする
-            if (chat != null)  {
+            if (chat != null) {
                 this.chat.sendMessage(body);
-            }
-            else if (muc!=null) {
+            } else if (muc != null) {
                 // 自分からのメッセージは受け取らないように変更
                 final Optional<String> messageFromOpt = Optional.of(message.getFrom());
                 final String[] s = messageFromOpt.orElse("").split("/");
@@ -56,6 +56,7 @@ public final class BotanMessage {
     public final Matcher getMatcher() {
         return this.matcher;
     }
+
     public final String getBody() {
         return message.getBody();
     }
