@@ -1,6 +1,8 @@
 package com.github.masahitojp.botan;
 
 import com.github.masahitojp.botan.adapter.BotanAdapter;
+import com.github.masahitojp.botan.brain.BotanBrain;
+import com.github.masahitojp.botan.brain.LocalBrain;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.listener.BotanMessageListener;
 import com.github.masahitojp.botan.listener.BotanMessageListenerBuilder;
@@ -26,27 +28,39 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class Botan {
     private final String name;
     private final BotanAdapter adapter;
-    private List<BotanMessageListener> listeners = new ArrayList<>();
+    private final List<BotanMessageListener> listeners = new ArrayList<>();
     private final AtomicBoolean flag = new AtomicBoolean(true);
-    public AtomicReference<MultiUserChat> muc = new AtomicReference<>();
+    public final BotanBrain brain;
+    public final AtomicReference<MultiUserChat> muc = new AtomicReference<>();
 
 
     public static class BotanBuilder {
         private static String DEFAULT_NAME = "botan";
         private String name = DEFAULT_NAME;
         private final BotanAdapter adapter;
+        private BotanBrain brain;
 
         public BotanBuilder(final BotanAdapter adapter) {
             this.adapter = adapter;
         }
 
-
-        public final BotanBuilder setName(String name) {
+        @SuppressWarnings("unused")
+        public final BotanBuilder setName(final String name) {
             this.name = name;
             return this;
         }
 
+        @SuppressWarnings("unused")
+        public final BotanBuilder setBrain(final BotanBrain brain) {
+            this.brain = brain;
+            return this;
+        }
+
+        @SuppressWarnings("unused")
         public final Botan build() {
+            if (this.brain == null) {
+                this.brain = new LocalBrain();
+            }
             return new Botan(this).run();
         }
     }
@@ -55,6 +69,7 @@ public final class Botan {
     {
         this.adapter = builder.adapter;
         this.name = builder.name;
+        this.brain = builder.brain;
     }
 
 
@@ -108,7 +123,7 @@ public final class Botan {
         }
     }
 
-
+    @SuppressWarnings("unused")
     public final void start() throws BotanException {
 
         final XMPPTCPConnectionConfiguration connConfig = XMPPTCPConnectionConfiguration

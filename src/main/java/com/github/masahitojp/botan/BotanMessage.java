@@ -62,6 +62,12 @@ public final class BotanMessage {
     }
 
     public final String getFrom() {
-        return message.getFrom();
+        final String from = message.getFrom();
+        final String[] elems = from.split("/");
+        if (elems.length > 0) {
+            return elems[elems.length -1];
+        } else {
+            return from;
+        }
     }
 }
