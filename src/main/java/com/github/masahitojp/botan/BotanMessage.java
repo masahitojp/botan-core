@@ -1,5 +1,6 @@
 package com.github.masahitojp.botan;
 
+import com.github.masahitojp.botan.brain.BotanBrain;
 import com.github.masahitojp.botan.exception.BotanException;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
@@ -67,7 +68,12 @@ public final class BotanMessage {
         if (elems.length > 0) {
             return elems[elems.length -1];
         } else {
-            return from;
+            final String[] strs = from.split("@");
+            return strs[0];
         }
+    }
+
+    public final BotanBrain getBrain() {
+        return this.botan.brain;
     }
 }
