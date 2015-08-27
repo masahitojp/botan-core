@@ -11,11 +11,11 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 
 public final class BotanMessage {
-    private Chat chat;
-    private MultiUserChat muc;
     private final Message message;
     private final Botan botan;
     private final Matcher matcher;
+    private Chat chat;
+    private MultiUserChat muc;
 
     public BotanMessage(final Botan botan, final Chat chat, final Message message, final Matcher matcher) {
         this.botan = botan;
@@ -31,13 +31,17 @@ public final class BotanMessage {
         this.matcher = matcher;
     }
 
+    @SuppressWarnings("unused")
     public final String getRobotName() {
         return this.botan.getName();
     }
 
+    @SuppressWarnings("unused")
     public final void reply(final String body) throws BotanException {
+        if (body == null) {
+            throw new IllegalArgumentException();
+        }
         try {
-            // Todo : コンストラクタでnullが割り当てられないようにする
             if (chat != null) {
                 this.chat.sendMessage(body);
             } else if (muc != null) {
@@ -54,25 +58,29 @@ public final class BotanMessage {
         }
     }
 
+    @SuppressWarnings("unused")
     public final Matcher getMatcher() {
         return this.matcher;
     }
 
+    @SuppressWarnings("unused")
     public final String getBody() {
         return message.getBody();
     }
 
+    @SuppressWarnings("unused")
     public final String getFrom() {
         final String from = message.getFrom();
         final String[] elems = from.split("/");
-        if (elems.length > 0) {
-            return elems[elems.length -1];
+        if (elems.length > 1) {
+            return elems[elems.length - 1];
         } else {
             final String[] strs = from.split("@");
             return strs[0];
         }
     }
 
+    @SuppressWarnings("unused")
     public final BotanBrain getBrain() {
         return this.botan.brain;
     }
