@@ -50,7 +50,7 @@ public class BotanMessageListener implements MessageListener, ChatMessageListene
     public final void setPattern(final String str) {
         final String pattern;
         if (allReceived) {
-            pattern = str;
+            pattern = String.format("^(?!@?%s:?\\s+)%s", botan.getName(), str);
         } else {
             pattern = String.format("^@?%s:?\\s+%s", botan.getName(), str);
         }
