@@ -1,14 +1,17 @@
 package com.github.masahitojp.botan.adapter;
 
 public interface BotanAdapter {
-    public String getNickName();
+    String getNickName();
 
-    public String getPassword();
+    String getPassword();
 
-    public String getRoomJabberId();
+    String getRoomJabberId();
 
-    public String getHost();
+    String getHost();
 
-    public String getRoomHost();
+    String getRoomHost();
 
+    void initialize();
+
+    void beforeShutdown();
 }

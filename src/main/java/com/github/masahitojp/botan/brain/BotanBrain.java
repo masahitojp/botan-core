@@ -7,4 +7,6 @@ public interface BotanBrain {
     Optional<byte[]> set(final String key, final byte[] value);
     int incr(final String key);
     int decr(final String key);
+    void initialize();
+    void beforeShutdown();
 }

@@ -54,4 +54,14 @@ public class LocalBrain implements BotanBrain {
     public int decr(String key) {
         return getInteger(key, t -> (t - 1) > 0 ? (t - 1) : 0);
     }
+
+    @Override
+    public void initialize() {
+
+    }
+
+    @Override
+    public void beforeShutdown() {
+
+    }
 }

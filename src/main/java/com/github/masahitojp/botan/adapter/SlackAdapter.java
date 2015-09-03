@@ -40,4 +40,14 @@ public class SlackAdapter implements BotanAdapter {
     public String getRoomHost() {
         return "@conference." + this.getHost();
     }
+
+    @Override
+    public void initialize() {
+
+    }
+
+    @Override
+    public void beforeShutdown() {
+
+    }
 }

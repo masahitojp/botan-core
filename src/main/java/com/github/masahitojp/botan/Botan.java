@@ -151,6 +151,7 @@ public final class Botan {
     @SuppressWarnings("unused")
     public final void stop() {
         this.flag.set(false);
+        BotanUtils.doFinalize();
     }
 
 
