@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Adapter for Slack.com
  */
 @Slf4j
-public class SlackAdapter implements BotanAdapter {
+public final class SlackAdapter implements BotanAdapter {
 
     private final String team;
     private final String user;
