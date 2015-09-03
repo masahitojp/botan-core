@@ -1,17 +1,17 @@
 package com.github.masahitojp.botan.adapter;
 
+import com.github.masahitojp.botan.Botan;
+import com.github.masahitojp.botan.exception.BotanException;
+import com.github.masahitojp.botan.message.BotanMessage;
+
+
 public interface BotanAdapter {
-    String getNickName();
 
-    String getPassword();
+    void run() throws BotanException;
 
-    String getRoomJabberId();
+    void say(BotanMessage message);
 
-    String getHost();
-
-    String getRoomHost();
-
-    void initialize();
+    void initialize(Botan botan);
 
     void beforeShutdown();
 }

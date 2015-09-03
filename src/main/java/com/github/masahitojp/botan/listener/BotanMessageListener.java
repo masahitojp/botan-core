@@ -1,20 +1,14 @@
 package com.github.masahitojp.botan.listener;
 
 import com.github.masahitojp.botan.Botan;
-import com.github.masahitojp.botan.BotanMessage;
-import org.jivesoftware.smack.MessageListener;
-import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.chat.ChatMessageListener;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.muc.MultiUserChat;
+import com.github.masahitojp.botan.message.BotanMessage;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class BotanMessageListener implements MessageListener, ChatMessageListener {
+public class BotanMessageListener {
 
     private final Botan botan;
 
@@ -42,6 +36,9 @@ public class BotanMessageListener implements MessageListener, ChatMessageListene
     public final void setAction(final Consumer<BotanMessage> action) {
         this.action = action;
     }
+    public final void apply(final BotanMessage message) {
+        this.action.accept(message);
+    }
 
     public final void setDescription(final String description) {
         this.description = description;
@@ -61,36 +58,6 @@ public class BotanMessageListener implements MessageListener, ChatMessageListene
         this.allReceived = allReceived;
     }
 
-    @Override
-    public final void processMessage(final Chat chat, final Message message) {
-        final String body = message.getBody();
-
-        if (body != null) {
-            final Matcher matcher = pattern.matcher(body);
-            if (matcher.find()) {
-                if (chat != null) {
-                    action.accept(new BotanMessage(botan, chat, message, matcher));
-                }
-            }
-        }
-    }
-
-    @Override
-    public final void processMessage(final Message message) {
-        final String body = message.getBody();
-        final String from = message.getFrom();
-        final MultiUserChat m = botan.muc.get();
-
-        if (body != null) {
-            final Matcher matcher = pattern.matcher(body);
-            if (matcher.find()) {
-                if (m != null && from.startsWith(m.getRoom())) {
-                    action.accept(new BotanMessage(botan, m, message, matcher));
-                }
-            }
-        }
-
-    }
 
     @Override
     public String toString() {

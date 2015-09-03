@@ -1,6 +1,6 @@
 package com.github.masahitojp.botan.utils;
 
-import com.github.masahitojp.botan.BotanMessage;
+import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.listener.BotanMessageListener;
 import com.github.masahitojp.botan.listener.BotanMessageListenerSetter;
 import lombok.experimental.UtilityClass;

@@ -7,32 +7,21 @@ import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.listener.BotanMessageListener;
 import com.github.masahitojp.botan.listener.BotanMessageListenerBuilder;
 import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
+import com.github.masahitojp.botan.message.BotanMessage;
+import com.github.masahitojp.botan.message.BotanMessageSimple;
 import com.github.masahitojp.botan.utils.BotanUtils;
-import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.reflections.Reflections;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
 
 public final class Botan {
     private final String name;
     private final BotanAdapter adapter;
     private final List<BotanMessageListener> listeners = new ArrayList<>();
-    private final AtomicBoolean flag = new AtomicBoolean(true);
     public final BotanBrain brain;
-    public final AtomicReference<MultiUserChat> muc = new AtomicReference<>();
-
 
     public static class BotanBuilder {
         private static String DEFAULT_NAME = "botan";
@@ -81,6 +70,9 @@ public final class Botan {
         return listeners;
     }
 
+    public void say(BotanMessage message) {
+        this.adapter.say(message);
+    }
 
     private Botan run() {
         setActions();
@@ -88,7 +80,7 @@ public final class Botan {
         return this;
     }
 
-    private void setActions() {
+        private void setActions() {
         final Reflections reflections = new Reflections();
         Set<Class<? extends BotanMessageListenerRegister>> classes = reflections.getSubTypesOf(BotanMessageListenerRegister.class);
         classes.forEach(clazz -> {
@@ -100,57 +92,31 @@ public final class Botan {
         });
     }
 
-    private void bind(AbstractXMPPConnection connection) {
 
-        try {
-            final ChatManager cm = ChatManager.getInstanceFor(connection);
-
-            // private message listener
-            cm.addChatListener((chat, message) -> this.listeners.forEach(chat::addMessageListener));
-
-
-            final MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
-            final MultiUserChat muc = mucm.getMultiUserChat(adapter.getRoomJabberId());
-
-            muc.join(adapter.getNickName(), adapter.getPassword());
-
-
-            // set listeners
-            this.listeners.forEach(muc::addMessageListener);
-            this.muc.set(muc);
-        } catch (XMPPException.XMPPErrorException | SmackException e) {
-            e.printStackTrace();
-        }
+    public final void receive(BotanMessageSimple message) {
+        this.getListeners().stream().filter(listener -> message.getBody() != null).forEach(listener -> {
+            final Matcher matcher = listener.getPattern().matcher(message.getBody());
+            if (matcher.find()) {
+                listener.apply(
+                        new BotanMessage(
+                                this,
+                                matcher,
+                                message
+                        ));
+            }
+        });
     }
 
     @SuppressWarnings("unused")
     public final void start() throws BotanException {
-
-        final XMPPTCPConnectionConfiguration connConfig = XMPPTCPConnectionConfiguration
-                .builder()
-                .setServiceName(adapter.getHost())
-                .setCompressionEnabled(false)
-                .build();
-
-        final AbstractXMPPConnection connection = new XMPPTCPConnection(connConfig);
-        try {
-            connection.connect();
-            connection.login(adapter.getNickName(), adapter.getPassword());
-            bind(connection);
-
-            while (flag.get()) {
-                Thread.sleep(1000L);
-            }
-        } catch (final XMPPException | SmackException | IOException | InterruptedException e) {
-            throw new BotanException(e);
-        } finally {
-            connection.disconnect();
-        }
+        adapter.initialize(this);
+        adapter.run();
     }
 
     @SuppressWarnings("unused")
     public final void stop() {
-        this.flag.set(false);
+        adapter.beforeShutdown();
+        brain.beforeShutdown();
         BotanUtils.doFinalize();
     }
 
