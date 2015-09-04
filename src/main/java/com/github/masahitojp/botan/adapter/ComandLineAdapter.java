@@ -14,7 +14,7 @@ public final class ComandLineAdapter implements BotanAdapter {
     @Override
     public void run() throws BotanException {
         try (final BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
-            for (; ; ) {
+            for (;;) {
                 System.out.print(botan.getName() + "> ");
 
                 final String line;

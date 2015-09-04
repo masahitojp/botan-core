@@ -30,7 +30,11 @@ public final class Botan {
         private BotanBrain brain;
 
         public BotanBuilder(final BotanAdapter adapter) {
+
             this.adapter = adapter;
+            if(adapter.getFromAdapterName().isPresent()) {
+                this.name = adapter.getFromAdapterName().get();
+            }
         }
 
         @SuppressWarnings("unused")
@@ -50,6 +54,8 @@ public final class Botan {
             if (this.brain == null) {
                 this.brain = new LocalBrain();
             }
+
+
             return new Botan(this).run();
         }
     }

@@ -4,6 +4,8 @@ import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 
+import java.util.Optional;
+
 
 public interface BotanAdapter {
 
@@ -14,4 +16,8 @@ public interface BotanAdapter {
     void initialize(Botan botan);
 
     void beforeShutdown();
+
+    default Optional<String> getFromAdapterName() {
+        return Optional.empty();
+    }
 }

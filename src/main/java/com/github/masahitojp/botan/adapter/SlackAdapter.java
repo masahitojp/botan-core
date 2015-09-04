@@ -16,6 +16,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -174,5 +175,9 @@ public final class SlackAdapter implements BotanAdapter {
             final String[] strs = from.split("@");
             return strs[0];
         }
+    }
+
+    public Optional<String> getFromAdapterName() {
+        return Optional.of(user);
     }
 }
