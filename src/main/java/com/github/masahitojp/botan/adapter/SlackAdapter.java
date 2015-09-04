@@ -98,7 +98,9 @@ public final class SlackAdapter implements BotanAdapter {
         if (message.getType() == Message.Type.groupchat.ordinal()) {
             if (muc != null) {
                 try {
-                    muc.sendMessage(new Message(message.getTo(), message.getBody()));
+                    if (!message.getFromName().equals(botan.getName())) {
+                        muc.sendMessage(new Message(message.getTo(), message.getBody()));
+                    }
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
                 }
