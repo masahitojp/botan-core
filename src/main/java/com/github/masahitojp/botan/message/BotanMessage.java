@@ -2,7 +2,7 @@ package com.github.masahitojp.botan.message;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.brain.BotanBrain;
-import lombok.NonNull;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.regex.Matcher;
@@ -10,10 +10,11 @@ import java.util.regex.Matcher;
 @ToString
 public final class BotanMessage {
     private final Botan botan;
+    @Getter
     private final Matcher matcher;
     private final BotanMessageSimple messageSimple;
 
-    public BotanMessage(@NonNull final Botan botan, @NonNull final Matcher matcher, @NonNull final BotanMessageSimple messageSimple) {
+    public BotanMessage(final Botan botan, final Matcher matcher, final BotanMessageSimple messageSimple) {
         this.botan = botan;
         this.matcher = matcher;
         this.messageSimple = messageSimple;
@@ -25,14 +26,9 @@ public final class BotanMessage {
     }
 
     @SuppressWarnings("unused")
-    public final void reply(@NonNull final String body) {
+    public final void reply(final String body) {
         botan.say(new BotanMessage(this.botan, this.matcher,
                 new BotanMessageSimple(body, messageSimple.getFrom(), messageSimple.getFromName(), messageSimple.getTo(), messageSimple.getType())));
-    }
-
-    @SuppressWarnings("unused")
-    public final Matcher getMatcher() {
-        return this.matcher;
     }
 
     @SuppressWarnings("unused")
