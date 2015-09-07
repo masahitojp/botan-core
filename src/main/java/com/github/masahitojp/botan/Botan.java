@@ -54,7 +54,7 @@ public final class Botan {
         Set<Class<? extends BotanMessageListenerRegister>> classes = reflections.getSubTypesOf(BotanMessageListenerRegister.class);
         classes.forEach(clazz -> {
             try {
-                clazz.newInstance().register();
+                clazz.newInstance().register(this);
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
