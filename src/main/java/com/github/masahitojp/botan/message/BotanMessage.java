@@ -2,6 +2,7 @@ package com.github.masahitojp.botan.message;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.brain.BotanBrain;
+import lombok.NonNull;
 
 import java.util.regex.Matcher;
 
@@ -23,10 +24,7 @@ public final class BotanMessage {
     }
 
     @SuppressWarnings("unused")
-    public final void reply(final String body) {
-        if (body == null) {
-            throw new IllegalArgumentException();
-        }
+    public final void reply(@NonNull final String body) {
         botan.say(new BotanMessage(this.botan, this.matcher, new BotanMessageSimple(body, messageSimple.getFrom(), messageSimple.getFromName(), messageSimple.getTo(), messageSimple.getType())));
     }
 
