@@ -10,6 +10,7 @@ import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import com.github.masahitojp.botan.utils.BotanUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -17,22 +18,87 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+@Slf4j
 public final class Botan {
+    public final BotanBrain brain;
     private final String name;
     private final BotanAdapter adapter;
     private final List<BotanMessageListener> listeners = new ArrayList<>();
-    public final BotanBrain brain;
+
+    private Botan(final BotanBuilder builder) {
+        this.adapter = builder.adapter;
+        this.name = builder.name;
+        this.brain = builder.brain;
+    }
+
+    public final String getName() {
+        return name;
+    }
+
+    public final List<BotanMessageListener> getListeners() {
+        return listeners;
+    }
+
+    public void say(BotanMessage message) {
+        this.adapter.say(message);
+    }
+
+    private Botan run() {
+        setActions();
+        BotanUtils.getActions().forEach(x -> listeners.add(BotanMessageListenerBuilder.build(this, x)));
+        return this;
+    }
+
+    private void setActions() {
+        final Reflections reflections = new Reflections();
+        Set<Class<? extends BotanMessageListenerRegister>> classes = reflections.getSubTypesOf(BotanMessageListenerRegister.class);
+        classes.forEach(clazz -> {
+            try {
+                clazz.newInstance().register();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public final void receive(BotanMessageSimple message) {
+        log.debug(message.toString());
+        this.getListeners().stream().filter(listener -> message.getBody() != null).forEach(listener -> {
+            final Matcher matcher = listener.getPattern().matcher(message.getBody());
+            if (matcher.find()) {
+                listener.apply(
+                        new BotanMessage(
+                                this,
+                                matcher,
+                                message
+                        ));
+            }
+        });
+    }
+
+    @SuppressWarnings("unused")
+    public final void start() throws BotanException {
+        adapter.initialize(this);
+        adapter.run();
+    }
+
+    @SuppressWarnings("unused")
+    public final void stop() {
+        adapter.beforeShutdown();
+        brain.beforeShutdown();
+        BotanUtils.doFinalize();
+    }
 
     public static class BotanBuilder {
         private static String DEFAULT_NAME = "botan";
-        private String name = DEFAULT_NAME;
         private final BotanAdapter adapter;
+        private String name = DEFAULT_NAME;
         private BotanBrain brain;
 
         public BotanBuilder(final BotanAdapter adapter) {
 
             this.adapter = adapter;
-            if(adapter.getFromAdapterName().isPresent()) {
+            if (adapter.getFromAdapterName().isPresent()) {
                 this.name = adapter.getFromAdapterName().get();
             }
         }
@@ -58,72 +124,6 @@ public final class Botan {
 
             return new Botan(this).run();
         }
-    }
-
-    private Botan(final BotanBuilder builder)
-    {
-        this.adapter = builder.adapter;
-        this.name = builder.name;
-        this.brain = builder.brain;
-    }
-
-
-    public final String getName() {
-        return name;
-    }
-
-    public final List<BotanMessageListener> getListeners() {
-        return listeners;
-    }
-
-    public void say(BotanMessage message) {
-        this.adapter.say(message);
-    }
-
-    private Botan run() {
-        setActions();
-        BotanUtils.getActions().forEach(x -> listeners.add(BotanMessageListenerBuilder.build(this, x)));
-        return this;
-    }
-
-        private void setActions() {
-        final Reflections reflections = new Reflections();
-        Set<Class<? extends BotanMessageListenerRegister>> classes = reflections.getSubTypesOf(BotanMessageListenerRegister.class);
-        classes.forEach(clazz -> {
-            try {
-                clazz.newInstance().register();
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-
-    public final void receive(BotanMessageSimple message) {
-        this.getListeners().stream().filter(listener -> message.getBody() != null).forEach(listener -> {
-            final Matcher matcher = listener.getPattern().matcher(message.getBody());
-            if (matcher.find()) {
-                listener.apply(
-                        new BotanMessage(
-                                this,
-                                matcher,
-                                message
-                        ));
-            }
-        });
-    }
-
-    @SuppressWarnings("unused")
-    public final void start() throws BotanException {
-        adapter.initialize(this);
-        adapter.run();
-    }
-
-    @SuppressWarnings("unused")
-    public final void stop() {
-        adapter.beforeShutdown();
-        brain.beforeShutdown();
-        BotanUtils.doFinalize();
     }
 
 

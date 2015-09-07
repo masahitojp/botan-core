@@ -20,12 +20,12 @@ public final class ComandLineAdapter implements BotanAdapter {
                 final String line;
                 try {
                     line = in.readLine();
-                    botan.receive(new BotanMessageSimple(line, "in", "in", "out", 0));
+                    botan.receive(new BotanMessageSimple(line));
                 } catch (Exception e) {
                     System.out.println("Invalid Input");
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }

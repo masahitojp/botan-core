@@ -41,23 +41,23 @@ public final class SlackAdapter implements BotanAdapter {
         this.room = room;
     }
 
-    public String getNickName() {
+    private String getNickName() {
         return this.user;
     }
 
-    public String getPassword() {
+    private String getPassword() {
         return this.pswd;
     }
 
-    public String getRoomJabberId() {
+    private String getRoomJabberId() {
         return room + getRoomHost();
     }
 
-    public String getHost() {
+    private String getHost() {
         return team + ".xmpp.slack.com";
     }
 
-    public String getRoomHost() {
+    private String getRoomHost() {
         return "@conference." + this.getHost();
     }
 
@@ -96,23 +96,26 @@ public final class SlackAdapter implements BotanAdapter {
 
     @Override
     public void say(BotanMessage message) {
-        if (message.getType() == Message.Type.groupchat.ordinal()) {
-            if (muc != null) {
+        if (message.getType() == Message.Type.groupchat.ordinal() || message.getFrom().contains("@conference.")) {
+            if (!message.getFromName().equals(botan.getName())) {
+            log.debug(message.toString());
+                final MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
+                final MultiUserChat muc = manager.getMultiUserChat(message.getFrom().split("/")[0]);
                 try {
-                    if (!message.getFromName().equals(botan.getName())) {
-                        muc.sendMessage(new Message(message.getTo(), message.getBody()));
+                    if (!muc.isJoined()) {
+                        muc.join(this.getNickName(), this.getPassword());
                     }
-                } catch (SmackException.NotConnectedException e) {
-                    e.printStackTrace();
+                    muc.sendMessage(new Message(message.getTo(), message.getBody()));
+                } catch (final XMPPException.XMPPErrorException | SmackException e) {
+                    log.warn("", e);
                 }
             }
-
         } else {
             final ChatManager cm = ChatManager.getInstanceFor(connection);
             try {
                 cm.createChat(message.getFrom()).sendMessage(new Message(message.getTo(), message.getBody()));
             } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
+                log.warn("", e);
             }
         }
     }

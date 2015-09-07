@@ -10,6 +10,14 @@ public class BotanMessageSimple {
     private final String to;
     private final int type;
 
+    public BotanMessageSimple(String body) {
+        this.body = body;
+        this.from = "";
+        this.fromName = "";
+        this.to = "";
+        this.type = -1;
+    }
+
     public BotanMessageSimple(String body, String from, String fromName, String to, int type) {
         this.body = body;
         this.from = from;
