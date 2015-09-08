@@ -20,13 +20,6 @@ public class BotanMessageListener {
     public final Pattern getPattern() {
         return pattern;
     }
-    public final String getPatternString() {
-        return patternString;
-    }
-
-    public final String getDescription() {
-        return description;
-    }
 
     public BotanMessageListener(final Botan botan) {
         this.botan = botan;
@@ -56,5 +49,11 @@ public class BotanMessageListener {
 
     public final void setAllReceived(final boolean allReceived) {
         this.allReceived = allReceived;
+    }
+
+    @Override
+    public String toString() {
+        final String prefix = this.allReceived? "": botan.getName() + " ";
+        return String.format("| %s%s - %s\n", prefix, this.patternString, this.description);
     }
 }
