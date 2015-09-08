@@ -3,7 +3,6 @@ package com.github.masahitojp.botan.listener;
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.message.BotanMessage;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -13,12 +12,16 @@ public class BotanMessageListener {
     private final Botan botan;
 
     private String description;
+    private String patternString;
     private Pattern pattern;
     private Consumer<BotanMessage> action;
     private boolean allReceived = false;
 
     public final Pattern getPattern() {
         return pattern;
+    }
+    public final String getPatternString() {
+        return patternString;
     }
 
     public final String getDescription() {
@@ -41,13 +44,14 @@ public class BotanMessageListener {
     }
 
     public final void setPattern(final String str) {
-        final String pattern;
+        this.patternString = str;
+        final String replyPattern;
         if (allReceived) {
-            pattern = String.format("^(?!@?%s:?\\s+)%s", botan.getName(), str);
+            replyPattern = String.format("^(?!@?%s:?\\s+)%s", botan.getName(), str);
         } else {
-            pattern = String.format("^@?%s:?\\s+%s", botan.getName(), str);
+            replyPattern = String.format("^@?%s:?\\s+%s", botan.getName(), str);
         }
-        this.pattern = Pattern.compile(pattern);
+        this.pattern = Pattern.compile(replyPattern);
     }
 
     public final void setAllReceived(final boolean allReceived) {
