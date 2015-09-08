@@ -118,4 +118,8 @@ public class Robot {
     public final String getName() {
         return this.botan.getName();
     }
+
+    public final void send(final BotanMessageSimple message) {
+        this.botan.say(new BotanMessage(this.botan, null, message));
+    }
 }
