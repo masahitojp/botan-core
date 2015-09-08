@@ -23,57 +23,34 @@ public final class Botan {
     public final BotanBrain brain;
     private final String name;
     private final BotanAdapter adapter;
-    private final List<BotanMessageListener> listeners = new ArrayList<>();
+    private Robot robot;
+
 
     private Botan(final BotanBuilder builder) {
         this.adapter = builder.adapter;
         this.name = builder.name;
         this.brain = builder.brain;
+        this.robot = new Robot(this);
     }
 
     public final String getName() {
         return name;
     }
 
-    public final List<BotanMessageListener> getListeners() {
-        return listeners;
-    }
+
 
     public void say(BotanMessage message) {
         this.adapter.say(message);
     }
 
     private Botan run() {
-        setActions();
-        BotanUtils.getActions().forEach(x -> listeners.add(BotanMessageListenerBuilder.build(this, x)));
+        this.robot.run();
         return this;
     }
 
-    private void setActions() {
-        final Reflections reflections = new Reflections();
-        Set<Class<? extends BotanMessageListenerRegister>> classes = reflections.getSubTypesOf(BotanMessageListenerRegister.class);
-        classes.forEach(clazz -> {
-            try {
-                clazz.newInstance().register(this);
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        });
-    }
 
     public final void receive(BotanMessageSimple message) {
-        log.debug(message.toString());
-        this.getListeners().stream().filter(listener -> message.getBody() != null).forEach(listener -> {
-            final Matcher matcher = listener.getPattern().matcher(message.getBody());
-            if (matcher.find()) {
-                listener.apply(
-                        new BotanMessage(
-                                this,
-                                matcher,
-                                message
-                        ));
-            }
-        });
+        this.robot.receive(message);
     }
 
     @SuppressWarnings("unused")
@@ -86,7 +63,7 @@ public final class Botan {
     public final void stop() {
         adapter.beforeShutdown();
         brain.beforeShutdown();
-        BotanUtils.doFinalize();
+        robot.doFinalize();
     }
 
     public static class BotanBuilder {

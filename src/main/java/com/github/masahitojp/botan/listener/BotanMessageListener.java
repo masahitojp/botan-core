@@ -29,10 +29,6 @@ public class BotanMessageListener {
         this.botan = botan;
     }
 
-    public final List<BotanMessageListener> getListeners() {
-        return botan.getListeners();
-    }
-
     public final void setAction(final Consumer<BotanMessage> action) {
         this.action = action;
     }
@@ -56,11 +52,5 @@ public class BotanMessageListener {
 
     public final void setAllReceived(final boolean allReceived) {
         this.allReceived = allReceived;
-    }
-
-
-    @Override
-    public String toString() {
-        return pattern.toString() + " " + this.description;
     }
 }
