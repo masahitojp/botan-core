@@ -59,6 +59,7 @@ public class Robot {
         });
     }
 
+    @Getter
     private List<BotanMessageListenerSetter> actions = new ArrayList<>();
     private List<Supplier<Boolean>> beforeShutdowns = new ArrayList<>();
 
@@ -112,5 +113,9 @@ public class Robot {
                 botanMessageListener.setAction(action);
             }
         });
+    }
+
+    public final String getName() {
+        return this.botan.getName();
     }
 }
