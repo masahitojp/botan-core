@@ -98,7 +98,7 @@ public final class SlackAdapter implements BotanAdapter {
     public void say(BotanMessage message) {
         if (message.getType() == Message.Type.groupchat.ordinal() || message.getFrom().contains("@conference.")) {
             if (!message.getFromName().equals(botan.getName())) {
-            log.debug(message.toString());
+                log.debug(message.toString());
                 final MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
                 final MultiUserChat muc = manager.getMultiUserChat(message.getFrom().split("/")[0]);
                 try {

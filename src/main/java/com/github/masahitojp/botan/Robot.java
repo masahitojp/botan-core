@@ -47,14 +47,17 @@ public class Robot {
 
     public final void receive(BotanMessageSimple message) {
         this.getListeners().stream().filter(listener -> message.getBody() != null).forEach(listener -> {
-            final Matcher matcher = listener.getPattern().matcher(message.getBody());
-            if (matcher.find()) {
-                listener.apply(
-                        new BotanMessage(
-                                this.botan,
-                                matcher,
-                                message
-                        ));
+            // 自分の発言ははじく
+            if (!message.getFromName().equals(botan.getName())) {
+                final Matcher matcher = listener.getPattern().matcher(message.getBody());
+                if (matcher.find()) {
+                    listener.apply(
+                            new BotanMessage(
+                                    this.botan,
+                                    matcher,
+                                    message
+                            ));
+                }
             }
         });
     }
