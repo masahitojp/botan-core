@@ -84,8 +84,7 @@ public final class Botan {
             if (this.brain == null) {
                 this.brain = new LocalBrain();
             }
-
-
+            this.brain.initialize();
             return new Botan(this).run();
         }
     }

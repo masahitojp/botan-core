@@ -11,7 +11,7 @@ public interface BotanMessageListenerRegister {
      */
     void register(final Robot robot);
 
-    default void initialize() {
+    default void initialize(final Robot robot) {
     }
 
     default void beforeShutdown() {

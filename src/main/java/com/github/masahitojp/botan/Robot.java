@@ -1,5 +1,6 @@
 package com.github.masahitojp.botan;
 
+import com.github.masahitojp.botan.brain.BotanBrain;
 import com.github.masahitojp.botan.listener.BotanMessageListener;
 import com.github.masahitojp.botan.listener.BotanMessageListenerBuilder;
 import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
@@ -31,7 +32,7 @@ public class Robot {
         classes.forEach(clazz -> {
             try {
                 final BotanMessageListenerRegister register = clazz.newInstance();
-                register.initialize();
+                register.initialize(this);
                 register.register(this);
                 registers.add(register);
             } catch (final InstantiationException | IllegalAccessException e) {
@@ -121,5 +122,10 @@ public class Robot {
     @SuppressWarnings("unused")
     public final void send(final BotanMessageSimple message) {
         this.botan.say(new BotanMessage(this.botan, null, message));
+    }
+
+    @SuppressWarnings("unused")
+    public final BotanBrain getBrain() {
+        return this.botan.brain;
     }
 }
