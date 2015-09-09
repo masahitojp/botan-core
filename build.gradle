@@ -5,7 +5,7 @@ apply plugin: 'idea'
 
 group = 'com.github.masahitojp'
 archivesBaseName = "botan"
-version = '0.0.0.20'
+version = '0.0.0.21'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

@@ -65,7 +65,7 @@ public class Robot {
 
 
     final void beforeShutdown() {
-        this.registers.forEach(BotanMessageListenerRegister::abandon);
+        this.registers.forEach(BotanMessageListenerRegister::beforeShutdown);
     }
 
     public final void hear(final String pattern, final String description, final Consumer<BotanMessage> action) {

@@ -50,7 +50,7 @@ public final class Botan {
     public final void stop() {
         adapter.beforeShutdown();
         brain.beforeShutdown();
-        robot.doFinalize();
+        robot.beforeShutdown();
     }
 
     public static class BotanBuilder {

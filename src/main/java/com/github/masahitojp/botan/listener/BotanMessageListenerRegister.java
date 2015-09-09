@@ -2,7 +2,7 @@ package com.github.masahitojp.botan.listener;
 
 import com.github.masahitojp.botan.Robot;
 
-public interface BotanMessageListenerRegister  {
+public interface BotanMessageListenerRegister {
     /**
      * register the bot method
      * use BotanUtis.hear or BotanUtis.respond
@@ -11,9 +11,9 @@ public interface BotanMessageListenerRegister  {
      */
     void register(final Robot robot);
 
-    default void initialize(){
+    default void initialize() {
     }
 
-    default void abandon(){
+    default void beforeShutdown() {
     }
 }
