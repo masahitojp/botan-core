@@ -13,8 +13,7 @@ public final class Botan {
     public final BotanBrain brain;
     private final String name;
     private final BotanAdapter adapter;
-    private Robot robot;
-
+    private final Robot robot;
 
     private Botan(final BotanBuilder builder) {
         this.adapter = builder.adapter;
@@ -36,7 +35,6 @@ public final class Botan {
         this.robot.run();
         return this;
     }
-
 
     public final void receive(BotanMessageSimple message) {
         this.robot.receive(message);

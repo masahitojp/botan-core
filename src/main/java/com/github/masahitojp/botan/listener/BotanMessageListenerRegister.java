@@ -10,4 +10,10 @@ public interface BotanMessageListenerRegister  {
      * @param robot Robot
      */
     void register(final Robot robot);
+
+    default void initialize(){
+    }
+
+    default void abandon(){
+    }
 }

@@ -57,11 +57,9 @@ public class LocalBrain implements BotanBrain {
 
     @Override
     public void initialize() {
-
     }
 
     @Override
     public void beforeShutdown() {
-
     }
 }

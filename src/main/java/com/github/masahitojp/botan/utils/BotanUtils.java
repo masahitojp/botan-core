@@ -13,8 +13,6 @@ import java.util.function.Supplier;
 
 @UtilityClass
 public final class BotanUtils {
-
-
     public static <T> T getRandom(final List<T> list) {
         int index = new Random().nextInt(list.size());
         return list.get(index);

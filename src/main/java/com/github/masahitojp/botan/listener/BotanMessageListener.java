@@ -17,23 +17,12 @@ public class BotanMessageListener {
     private Consumer<BotanMessage> action;
     private boolean allReceived = false;
 
-    public final Pattern getPattern() {
-        return pattern;
-    }
-
     public BotanMessageListener(final Botan botan) {
         this.botan = botan;
     }
 
-    public final void setAction(final Consumer<BotanMessage> action) {
-        this.action = action;
-    }
-    public final void apply(final BotanMessage message) {
-        this.action.accept(message);
-    }
-
-    public final void setDescription(final String description) {
-        this.description = description;
+    public final Pattern getPattern() {
+        return pattern;
     }
 
     public final void setPattern(final String str) {
@@ -47,13 +36,25 @@ public class BotanMessageListener {
         this.pattern = Pattern.compile(replyPattern);
     }
 
+    public final void setAction(final Consumer<BotanMessage> action) {
+        this.action = action;
+    }
+
+    public final void apply(final BotanMessage message) {
+        this.action.accept(message);
+    }
+
+    public final void setDescription(final String description) {
+        this.description = description;
+    }
+
     public final void setAllReceived(final boolean allReceived) {
         this.allReceived = allReceived;
     }
 
     @Override
     public String toString() {
-        final String prefix = this.allReceived? "": botan.getName() + " ";
+        final String prefix = this.allReceived ? "" : botan.getName() + " ";
         return String.format("| %s%s - %s\n", prefix, this.patternString, this.description);
     }
 }
