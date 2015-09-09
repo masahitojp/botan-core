@@ -64,7 +64,7 @@ public class Robot {
     }
 
 
-    final void doFinalize() {
+    final void beforeShutdown() {
         this.registers.forEach(BotanMessageListenerRegister::abandon);
     }
 

@@ -2,10 +2,15 @@ package com.github.masahitojp.botan.brain;
 
 
 import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class LocalBrain implements BotanBrain {
     private final ConcurrentHashMap<String, byte[]> brain;
@@ -56,10 +61,10 @@ public class LocalBrain implements BotanBrain {
     }
 
     @Override
-    public void initialize() {
-    }
-
-    @Override
-    public void beforeShutdown() {
+    public Set<Map.Entry<String, byte[]>> search(final String startsWith) {
+        return this.brain.entrySet()
+                .stream()
+                .filter(e -> e.getKey().startsWith(startsWith))
+                .collect(Collectors.toSet());
     }
 }
