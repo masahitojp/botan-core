@@ -2,37 +2,39 @@ package com.github.masahitojp.botan.brain;
 
 
 import java.nio.ByteBuffer;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class LocalBrain implements BotanBrain {
-    private final ConcurrentHashMap<String, byte[]> brain;
+    private final ConcurrentHashMap<String, byte[]> data;
     private final StampedLock lock = new StampedLock();
 
     public LocalBrain() {
-        brain = new ConcurrentHashMap<>();
+        data = new ConcurrentHashMap<>();
     }
 
     @Override
     public Optional<byte[]> get(String key) {
-        return Optional.ofNullable(brain.get(key));
+        return Optional.ofNullable(data.get(key));
     }
 
     @Override
-    public Optional<byte[]> set(String key, byte[] value) {
-        return Optional.ofNullable(brain.put(key, value));
+    public Optional<byte[]> put(String key, byte[] value) {
+        return Optional.ofNullable(data.put(key, value));
     }
 
+    @Override
+    public Optional<byte[]> delete(String key) {
+        return Optional.ofNullable(data.remove(key));
+    }
     private int getInteger(String key, Function<Integer,Integer> func) {
         final long stamp = lock.writeLock();
-        final byte[] value = brain.get(key);
+        final byte[] value = data.get(key);
         final int before;
         final ByteBuffer buffer;
         if (value != null) {
@@ -45,7 +47,7 @@ public class LocalBrain implements BotanBrain {
         final int result = func.apply(before);
         buffer.clear();
         buffer.putInt(result);
-        brain.put(key, buffer.array());
+        data.put(key, buffer.array());
         lock.unlock(stamp);
         return result;
     }
@@ -62,7 +64,7 @@ public class LocalBrain implements BotanBrain {
 
     @Override
     public Set<Map.Entry<String, byte[]>> search(final String startsWith) {
-        return this.brain.entrySet()
+        return this.data.entrySet()
                 .stream()
                 .filter(e -> e.getKey().startsWith(startsWith))
                 .collect(Collectors.toSet());

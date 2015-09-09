@@ -9,7 +9,8 @@ import java.util.Set;
  */
 public interface BotanBrain {
     Optional<byte[]> get(final String key);
-    Optional<byte[]> set(final String key, final byte[] value);
+    Optional<byte[]> put(final String key, final byte[] value);
+    Optional<byte[]> delete(final String key);
     int incr(final String key);
     int decr(final String key);
     Set<Map.Entry<String, byte[]>> search(final String startsWith);

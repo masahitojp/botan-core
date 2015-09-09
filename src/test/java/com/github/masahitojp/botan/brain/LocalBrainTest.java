@@ -22,8 +22,10 @@ public class LocalBrainTest {
         final byte[] value = "test_abc".getBytes();
 
         assertThat(data.get("test"), is(Optional.empty()));
-        assertThat(data.set("test", value), is(Optional.empty()));
+        assertThat(data.put("test", value), is(Optional.empty()));
         assertThat(data.get("test"), is(Optional.of(value)));
+        assertThat(data.delete("test"), is(Optional.of(value)));
+        assertThat(data.get("test"), is(Optional.empty()));
     }
 
     @Test
