@@ -8,12 +8,10 @@ import java.util.Set;
  * like hubot brain(persistent data)
  */
 public interface BotanBrain {
-    Optional<byte[]> get(final String key);
-    Optional<byte[]> put(final String key, final byte[] value);
-    Optional<byte[]> delete(final String key);
-    int incr(final String key);
-    int decr(final String key);
-    Set<Map.Entry<String, byte[]>> search(final String startsWith);
+    Optional<byte[]> get(final byte[] key);
+    Optional<byte[]> put(final byte[] key, final byte[] value);
+    Optional<byte[]> delete(final byte[] key);
+    Set<byte[]> keys(final byte[] startsWith);
 
     @SuppressWarnings("unused")
     default void initialize() {}
