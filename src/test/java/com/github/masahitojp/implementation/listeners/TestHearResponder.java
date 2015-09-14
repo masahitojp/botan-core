@@ -1,10 +1,10 @@
 package com.github.masahitojp.implementation.listeners;
 
 import com.github.masahitojp.botan.Robot;
-import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
+import com.github.masahitojp.botan.responder.BotanMessageResponderRegister;
 
 @SuppressWarnings("unused")
-public class TestHearListener implements BotanMessageListenerRegister {
+public class TestHearResponder implements BotanMessageResponderRegister {
 
     @Override
     public void register(Robot robot) {

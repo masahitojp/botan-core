@@ -4,8 +4,8 @@ apply plugin: 'signing'
 apply plugin: 'idea'
 
 group = 'com.github.masahitojp'
-archivesBaseName = "botan"
-version = '0.0.0.24'
+archivesBaseName = "botan-core"
+version = '0.0.0.25'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -91,14 +91,14 @@ uploadArchives {
             }
 
             pom.project {
-                name 'botan'
+                name 'botan-core'
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'It is determined whether or not the haiku'
-                url 'https://github.com/masahitojp/botan'
+                url 'https://github.com/masahitojp/botan-core'
 
                 scm {
-                    url 'https://github.com/masahitojp/botan.git'
+                    url 'https://github.com/masahitojp/botan-core.git'
                 }
 
                 licenses {

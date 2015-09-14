@@ -1,8 +1,8 @@
-package com.github.masahitojp.botan.listener;
+package com.github.masahitojp.botan.responder;
 
 import com.github.masahitojp.botan.Robot;
 
-public interface BotanMessageListenerRegister {
+public interface BotanMessageResponderRegister {
     /**
      * register the bot method
      * use BotanUtis.hear or BotanUtis.respond

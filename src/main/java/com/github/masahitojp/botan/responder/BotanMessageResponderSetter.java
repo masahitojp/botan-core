@@ -1,9 +1,9 @@
-package com.github.masahitojp.botan.listener;
+package com.github.masahitojp.botan.responder;
 
 
 import java.util.function.Consumer;
 
-public interface BotanMessageListenerSetter extends Consumer<BotanMessageListener> {
+public interface BotanMessageResponderSetter extends Consumer<BotanMessageResponder> {
 
     @SuppressWarnings("unused")
     String getDescription();

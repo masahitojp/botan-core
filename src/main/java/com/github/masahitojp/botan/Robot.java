@@ -1,10 +1,10 @@
 package com.github.masahitojp.botan;
 
 import com.github.masahitojp.botan.brain.BotanBrain;
-import com.github.masahitojp.botan.listener.BotanMessageListener;
-import com.github.masahitojp.botan.listener.BotanMessageListenerBuilder;
-import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
-import com.github.masahitojp.botan.listener.BotanMessageListenerSetter;
+import com.github.masahitojp.botan.responder.BotanMessageResponder;
+import com.github.masahitojp.botan.responder.BotanMessageResponderBuilder;
+import com.github.masahitojp.botan.responder.BotanMessageResponderRegister;
+import com.github.masahitojp.botan.responder.BotanMessageResponderSetter;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import lombok.Getter;
@@ -19,19 +19,19 @@ import java.util.regex.Matcher;
 public class Robot {
     private final Botan botan;
     @Getter
-    private final List<BotanMessageListener> listeners = new ArrayList<>();
-    private final List<BotanMessageListenerSetter> actions = new ArrayList<>();
-    private final List<BotanMessageListenerRegister> registers = new ArrayList<>();
+    private final List<BotanMessageResponder> listeners = new ArrayList<>();
+    private final List<BotanMessageResponderSetter> actions = new ArrayList<>();
+    private final List<BotanMessageResponderRegister> registers = new ArrayList<>();
     public Robot(final Botan botan) {
         this.botan = botan;
     }
 
     private void setActions() {
         final Reflections reflections = new Reflections();
-        Set<Class<? extends BotanMessageListenerRegister>> classes = reflections.getSubTypesOf(BotanMessageListenerRegister.class);
+        Set<Class<? extends BotanMessageResponderRegister>> classes = reflections.getSubTypesOf(BotanMessageResponderRegister.class);
         classes.forEach(clazz -> {
             try {
-                final BotanMessageListenerRegister register = clazz.newInstance();
+                final BotanMessageResponderRegister register = clazz.newInstance();
                 register.initialize(this);
                 register.register(this);
                 registers.add(register);
@@ -44,7 +44,7 @@ public class Robot {
 
     final void run() {
         setActions();
-        this.actions.forEach(x -> listeners.add(BotanMessageListenerBuilder.build(this.botan, x)));
+        this.actions.forEach(x -> listeners.add(BotanMessageResponderBuilder.build(this.botan, x)));
     }
 
     public final void receive(BotanMessageSimple message) {
@@ -66,11 +66,11 @@ public class Robot {
 
 
     final void beforeShutdown() {
-        this.registers.forEach(BotanMessageListenerRegister::beforeShutdown);
+        this.registers.forEach(BotanMessageResponderRegister::beforeShutdown);
     }
 
     public final void hear(final String pattern, final String description, final Consumer<BotanMessage> action) {
-        actions.add(new BotanMessageListenerSetter() {
+        actions.add(new BotanMessageResponderSetter() {
             @Override
             public String getDescription() {
                 return description;
@@ -82,17 +82,17 @@ public class Robot {
             }
 
             @Override
-            public void accept(BotanMessageListener botanMessageListener) {
-                botanMessageListener.setAllReceived(true);
-                botanMessageListener.setDescription(description);
-                botanMessageListener.setPattern(pattern);
-                botanMessageListener.setAction(action);
+            public void accept(BotanMessageResponder botanMessageResponder) {
+                botanMessageResponder.setAllReceived(true);
+                botanMessageResponder.setDescription(description);
+                botanMessageResponder.setPattern(pattern);
+                botanMessageResponder.setAction(action);
             }
         });
     }
 
     public final void respond(final String pattern, final String description, final Consumer<BotanMessage> action) {
-        actions.add(new BotanMessageListenerSetter() {
+        actions.add(new BotanMessageResponderSetter() {
             @Override
             public String getDescription() {
                 return description;
@@ -104,11 +104,11 @@ public class Robot {
             }
 
             @Override
-            public void accept(BotanMessageListener botanMessageListener) {
-                botanMessageListener.setAllReceived(false);
-                botanMessageListener.setDescription(description);
-                botanMessageListener.setPattern(pattern);
-                botanMessageListener.setAction(action);
+            public void accept(BotanMessageResponder botanMessageResponder) {
+                botanMessageResponder.setAllReceived(false);
+                botanMessageResponder.setDescription(description);
+                botanMessageResponder.setPattern(pattern);
+                botanMessageResponder.setAction(action);
             }
         });
     }
