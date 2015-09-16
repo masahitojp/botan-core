@@ -34,7 +34,7 @@ public final class BotanMessageHandler implements Comparable {
         } else {
             replyPattern = String.format("^@?%s:?\\s+%s", botan.getName(), str);
         }
-        this.pattern = Pattern.compile(replyPattern);
+        this.pattern = Pattern.compile(replyPattern, Pattern.DOTALL);
     }
 
     public final void setHandle(final Consumer<BotanMessage> handle) {
