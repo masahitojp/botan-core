@@ -47,12 +47,14 @@ public final class Botan {
 
     @SuppressWarnings("unused")
     public final void start() throws BotanException {
+        log.info("bot start");
         adapter.initialize(this);
         adapter.run();
     }
 
     @SuppressWarnings("unused")
     public final void stop() {
+        log.info("bot stop");
         adapter.beforeShutdown();
         brain.beforeShutdown();
         robot.beforeShutdown();
@@ -158,6 +160,7 @@ public final class Botan {
                     this.adapter = new ComandLineAdapter();
                 }
             }
+            log.info("adapter: {}", this.adapter.getClass().getName());
         }
 
         private void setDefaultBrain() {
@@ -195,6 +198,7 @@ public final class Botan {
                 }
             }
             this.brain.initialize();
+            log.info("brain: {}", this.brain.getClass().getName());
         }
     }
 

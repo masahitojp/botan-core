@@ -3,11 +3,12 @@ package com.github.masahitojp.botan.handler;
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.message.BotanMessage;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 
-public final class BotanMessageHandler {
+public final class BotanMessageHandler implements Comparable {
 
     private final Botan botan;
 
@@ -56,5 +57,12 @@ public final class BotanMessageHandler {
     public String toString() {
         final String prefix = this.allReceived ? "" : botan.getName() + " ";
         return String.format("| %s%s - %s\n", prefix, this.patternString, this.description);
+    }
+
+    @Override
+    public int compareTo(@Nonnull Object o) {
+        BotanMessageHandler other = (BotanMessageHandler) o;
+        if (other.allReceived) return 1;
+        else return -1;
     }
 }
