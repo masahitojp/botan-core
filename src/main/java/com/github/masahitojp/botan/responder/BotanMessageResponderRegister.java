@@ -5,7 +5,7 @@ import com.github.masahitojp.botan.Robot;
 public interface BotanMessageResponderRegister {
     /**
      * register the bot method
-     * use BotanUtis.hear or BotanUtis.respond
+     * use Robot#respond or Robot#hear
      *
      * @param robot Robot
      */
