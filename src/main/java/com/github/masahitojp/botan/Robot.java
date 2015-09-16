@@ -49,7 +49,7 @@ public class Robot {
     }
 
     public final void receive(BotanMessageSimple message) {
-        this.handlers.stream().filter(listener -> message.getBody() != null).forEach(listener -> {
+        this.handlers.parallelStream().filter(listener -> message.getBody() != null).forEach(listener -> {
             // 自分の発言ははじく
             if (!message.getFromName().equals(botan.getName())) {
                 final Matcher matcher = listener.getPattern().matcher(message.getBody());
