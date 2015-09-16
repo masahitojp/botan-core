@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
-public class BotanMessageResponderTest {
+public class BotanMessageHandlersTest {
     @Test
     public void toStringTest() {
         final Botan botan = new Botan.BotanBuilder().setAdapter(new ComandLineAdapter()).build();

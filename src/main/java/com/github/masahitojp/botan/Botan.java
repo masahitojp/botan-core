@@ -160,11 +160,11 @@ public final class Botan {
                     this.adapter = new ComandLineAdapter();
                 }
             }
-            log.info("adapter: {}", this.adapter.getClass().getName());
+            log.info("adapter: {}", this.adapter.getClass().getSimpleName());
         }
 
         private void setDefaultBrain() {
-            if (this.adapter == null) {
+            if (this.brain == null) {
                 final Optional<String> designatedClassName = Optional.ofNullable(System.getProperty("brain"));
                 final Reflections reflections = new Reflections();
                 Set<Class<? extends BotanBrain>> classes = reflections.getSubTypesOf(BotanBrain.class);
@@ -198,7 +198,7 @@ public final class Botan {
                 }
             }
             this.brain.initialize();
-            log.info("brain: {}", this.brain.getClass().getName());
+            log.info("brain: {}", this.brain.getClass().getSimpleName());
         }
     }
 
