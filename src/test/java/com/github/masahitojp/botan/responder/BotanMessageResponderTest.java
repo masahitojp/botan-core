@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.*;
 public class BotanMessageResponderTest {
     @Test
     public void toStringTest() {
-        final Botan botan = new Botan.BotanBuilder(new ComandLineAdapter()).build();
+        final Botan botan = new Botan.BotanBuilder().setAdapter(new ComandLineAdapter()).build();
         final BotanMessageResponder listener = new BotanMessageResponder(botan);
         listener.setAllReceived(true);
         listener.setDescription("test");

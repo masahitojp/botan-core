@@ -1,12 +1,17 @@
 package com.github.masahitojp.botan;
 
 import com.github.masahitojp.botan.adapter.BotanAdapter;
+import com.github.masahitojp.botan.adapter.ComandLineAdapter;
 import com.github.masahitojp.botan.brain.BotanBrain;
 import com.github.masahitojp.botan.brain.LocalBrain;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
+import com.github.masahitojp.botan.utils.BotanUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.reflections.Reflections;
+
+import java.util.*;
 
 @Slf4j
 public final class Botan {
@@ -55,16 +60,21 @@ public final class Botan {
 
     public static class BotanBuilder {
         private static String DEFAULT_NAME = "botan";
-        private final BotanAdapter adapter;
+        private BotanAdapter adapter;
         private String name = DEFAULT_NAME;
         private BotanBrain brain;
+        private HashMap<String, String> configs;
+        private boolean useEnvironmentVariables = false;
+        public BotanBuilder() {
+        }
 
-        public BotanBuilder(final BotanAdapter adapter) {
-
+        @SuppressWarnings("unused")
+        public final BotanBuilder setAdapter(final BotanAdapter adapter) {
             this.adapter = adapter;
             if (adapter.getFromAdapterName().isPresent()) {
                 this.name = adapter.getFromAdapterName().get();
             }
+            return this;
         }
 
         @SuppressWarnings("unused")
@@ -80,12 +90,112 @@ public final class Botan {
         }
 
         @SuppressWarnings("unused")
+        public final BotanBuilder setConfigs(final HashMap<String, String> configs) {
+            this.configs = configs;
+            return this;
+        }
+
+        @SuppressWarnings("unused")
+        public final BotanBuilder useEnvironmentVariables(final boolean flag) {
+            this.useEnvironmentVariables = flag;
+            return this;
+        }
+
+        @SuppressWarnings("unused")
         public final Botan build() {
+            setGlobalProperties();
+            setDefaultAdapter();
+            setDefaultBrain();
+            return new Botan(this).run();
+        }
+
+        private void setGlobalProperties() {
+            final Properties properties = System.getProperties();
+
+            if (useEnvironmentVariables) {
+                final Map<String, String> env = System.getenv();
+                env.entrySet().stream().forEach(e -> properties.merge(BotanUtils.UpperUnderScoreToLowerDot(e.getKey()), e.getValue(), (oldValue, value) -> e.getValue()));
+            }
+            if (configs != null) {
+                this.configs.entrySet().stream().forEach(e -> properties.merge(BotanUtils.UpperUnderScoreToLowerDot(e.getKey()), e.getValue(), (oldValue, value) -> e.getValue()));
+            }
+        }
+
+        private void setDefaultAdapter() {
+            if (this.adapter == null) {
+                final Optional<String> designatedClassName = Optional.ofNullable(System.getProperty("adapter"));
+                final Reflections reflections = new Reflections();
+                Set<Class<? extends BotanAdapter>> classes = reflections.getSubTypesOf(BotanAdapter.class);
+
+                designatedClassName.ifPresent(x -> classes.stream().filter(clazz -> clazz.getName().equals(x)).forEach(
+                        y -> {
+                            try {
+                                this.adapter = y.newInstance();
+                            } catch (InstantiationException | IllegalAccessException e) {
+                                log.warn("{}", e);
+                            }
+                        }
+                ));
+
+
+                if (this.adapter == null) {
+                    Optional<Class<? extends BotanAdapter>> last = classes.stream()
+                            .filter(clazz -> !clazz.getName().equals(ComandLineAdapter.class.getName()))
+                            .reduce((previous, current) -> current);
+
+                    last.ifPresent(adapter -> {
+                        try {
+                            this.adapter = adapter.newInstance();
+                            if (this.adapter.getFromAdapterName().isPresent()) {
+                                this.name = this.adapter.getFromAdapterName().get();
+                            }
+                        } catch (InstantiationException | IllegalAccessException e) {
+                            log.warn("{}", e);
+                        }
+                    });
+                }
+                if (this.adapter == null) {
+                    this.adapter = new ComandLineAdapter();
+                }
+            }
+        }
+
+        private void setDefaultBrain() {
+            if (this.adapter == null) {
+                final Optional<String> designatedClassName = Optional.ofNullable(System.getProperty("brain"));
+                final Reflections reflections = new Reflections();
+                Set<Class<? extends BotanBrain>> classes = reflections.getSubTypesOf(BotanBrain.class);
+
+                designatedClassName.ifPresent(x -> classes.stream().filter(clazz -> clazz.getName().equals(x)).forEach(
+                        y -> {
+                            try {
+                                this.brain = y.newInstance();
+                            } catch (InstantiationException | IllegalAccessException e) {
+                                log.warn("{}", e);
+                            }
+                        }
+                ));
+            }
             if (this.brain == null) {
+                final Reflections reflections = new Reflections();
+                Set<Class<? extends BotanBrain>> classes = reflections.getSubTypesOf(BotanBrain.class);
+                Optional<Class<? extends BotanBrain>> last = classes.stream()
+                        .filter(clazz -> !clazz.getName().equals(LocalBrain.class.getName()))
+                        .reduce((previous, current) -> current);
+
+                last.ifPresent(x -> {
+                    try {
+                        this.brain = x.newInstance();
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        log.warn("{}", e);
+                    }
+                });
+            }
+
+            if(this.brain == null) {
                 this.brain = new LocalBrain();
             }
             this.brain.initialize();
-            return new Botan(this).run();
         }
     }
 

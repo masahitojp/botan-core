@@ -34,6 +34,13 @@ public final class SlackAdapter implements BotanAdapter {
     private MultiUserChat muc = null;
     private Botan botan;
 
+    public SlackAdapter() {
+        this.team = Optional.ofNullable(System.getProperty("slack.team")).orElse("");
+        this.user = Optional.ofNullable(System.getProperty("slack.username")).orElse("");
+        this.pswd = Optional.ofNullable(System.getProperty("slack.password")).orElse("");
+        this.room = Optional.ofNullable(System.getProperty("slack.channel")).orElse("");
+    }
+
     public SlackAdapter(String team, String user, String pswd, String room) {
         this.team = team;
         this.user = user;
