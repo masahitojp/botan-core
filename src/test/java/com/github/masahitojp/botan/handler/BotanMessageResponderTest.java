@@ -11,11 +11,11 @@ public class BotanMessageResponderTest {
     @Test
     public void toStringTest() {
         final Botan botan = new Botan.BotanBuilder().setAdapter(new ComandLineAdapter()).build();
-        final BotanMessageHandler listener = new BotanMessageHandler(botan);
-        listener.setAllReceived(true);
-        listener.setDescription("test");
-        listener.setPattern("pattern");
-        assertThat(listener.toString(), is("| pattern - test\n"));
+        final BotanMessageHandler handler = new BotanMessageHandler(botan);
+        handler.setAllReceived(true);
+        handler.setDescription("test");
+        handler.setPattern("pattern");
+        assertThat(handler.toString(), is("| pattern - test\n"));
     }
 
 }

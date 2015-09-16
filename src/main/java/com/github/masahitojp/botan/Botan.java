@@ -7,7 +7,7 @@ import com.github.masahitojp.botan.brain.LocalBrain;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
-import com.github.masahitojp.botan.utils.BotanUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
@@ -90,14 +90,14 @@ public final class Botan {
         }
 
         @SuppressWarnings("unused")
-        public final BotanBuilder setConfigs(final HashMap<String, String> configs) {
+        public final BotanBuilder addGlobalPropertiesAtTopPriority(final HashMap<String, String> configs) {
             this.configs = configs;
             return this;
         }
 
         @SuppressWarnings("unused")
-        public final BotanBuilder useEnvironmentVariables(final boolean flag) {
-            this.useEnvironmentVariables = flag;
+        public final BotanBuilder addEnvironmentVariablesToGlobalProperties() {
+            this.useEnvironmentVariables = true;
             return this;
         }
 
@@ -114,10 +114,10 @@ public final class Botan {
 
             if (useEnvironmentVariables) {
                 final Map<String, String> env = System.getenv();
-                env.entrySet().stream().forEach(e -> properties.merge(BotanUtils.UpperUnderScoreToLowerDot(e.getKey()), e.getValue(), (oldValue, value) -> e.getValue()));
+                env.entrySet().stream().forEach(e -> properties.merge(UpperUnderScoreToLowerDot(e.getKey()), e.getValue(), (oldValue, value) -> e.getValue()));
             }
             if (configs != null) {
-                this.configs.entrySet().stream().forEach(e -> properties.merge(BotanUtils.UpperUnderScoreToLowerDot(e.getKey()), e.getValue(), (oldValue, value) -> e.getValue()));
+                this.configs.entrySet().stream().forEach(e -> properties.merge(UpperUnderScoreToLowerDot(e.getKey()), e.getValue(), (oldValue, value) -> e.getValue()));
             }
         }
 
@@ -167,37 +167,39 @@ public final class Botan {
                 Set<Class<? extends BotanBrain>> classes = reflections.getSubTypesOf(BotanBrain.class);
 
                 designatedClassName.ifPresent(x -> classes.stream().filter(clazz -> clazz.getName().equals(x)).forEach(
-                        y -> {
+                        clazz -> {
                             try {
-                                this.brain = y.newInstance();
+                                this.brain = clazz.newInstance();
                             } catch (InstantiationException | IllegalAccessException e) {
                                 log.warn("{}", e);
                             }
                         }
                 ));
-            }
-            if (this.brain == null) {
-                final Reflections reflections = new Reflections();
-                Set<Class<? extends BotanBrain>> classes = reflections.getSubTypesOf(BotanBrain.class);
-                Optional<Class<? extends BotanBrain>> last = classes.stream()
-                        .filter(clazz -> !clazz.getName().equals(LocalBrain.class.getName()))
-                        .reduce((previous, current) -> current);
 
-                last.ifPresent(x -> {
-                    try {
-                        this.brain = x.newInstance();
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        log.warn("{}", e);
-                    }
-                });
-            }
+                if (this.brain == null) {
+                    Optional<Class<? extends BotanBrain>> last = classes.stream()
+                            .filter(clazz -> !clazz.getName().equals(LocalBrain.class.getName()))
+                            .reduce((previous, current) -> current);
 
-            if(this.brain == null) {
-                this.brain = new LocalBrain();
+                    last.ifPresent(x -> {
+                        try {
+                            this.brain = x.newInstance();
+                        } catch (InstantiationException | IllegalAccessException e) {
+                            log.warn("{}", e);
+                        }
+                    });
+                }
+
+                if (this.brain == null) {
+                    this.brain = new LocalBrain();
+                }
             }
             this.brain.initialize();
         }
     }
 
 
+    private static String UpperUnderScoreToLowerDot(final String src) {
+        return src.toLowerCase().replace("_", ".");
+    }
 }

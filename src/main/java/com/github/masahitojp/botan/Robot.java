@@ -3,8 +3,8 @@ package com.github.masahitojp.botan;
 import com.github.masahitojp.botan.brain.BotanBrain;
 import com.github.masahitojp.botan.handler.BotanMessageHandler;
 import com.github.masahitojp.botan.handler.BotanMessageHandlerBuilder;
-import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.github.masahitojp.botan.handler.BotanMessageHandlerSetter;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import lombok.Getter;
@@ -19,9 +19,10 @@ import java.util.regex.Matcher;
 public class Robot {
     private final Botan botan;
     @Getter
-    private final List<BotanMessageHandler> listeners = new ArrayList<>();
+    private final List<BotanMessageHandler> handlers = new ArrayList<>();
     private final List<BotanMessageHandlerSetter> actions = new ArrayList<>();
     private final List<BotanMessageHandlers> registers = new ArrayList<>();
+
     public Robot(final Botan botan) {
         this.botan = botan;
     }
@@ -44,11 +45,11 @@ public class Robot {
 
     final void run() {
         setActions();
-        this.actions.forEach(x -> listeners.add(BotanMessageHandlerBuilder.build(this.botan, x)));
+        this.actions.forEach(x -> handlers.add(BotanMessageHandlerBuilder.build(this.botan, x)));
     }
 
     public final void receive(BotanMessageSimple message) {
-        this.listeners.stream().filter(listener -> message.getBody() != null).forEach(listener -> {
+        this.handlers.stream().filter(listener -> message.getBody() != null).forEach(listener -> {
             // 自分の発言ははじく
             if (!message.getFromName().equals(botan.getName())) {
                 final Matcher matcher = listener.getPattern().matcher(message.getBody());
@@ -86,7 +87,7 @@ public class Robot {
                 botanMessageResponder.setAllReceived(true);
                 botanMessageResponder.setDescription(description);
                 botanMessageResponder.setPattern(pattern);
-                botanMessageResponder.setAction(action);
+                botanMessageResponder.setHandle(action);
             }
         });
     }
@@ -108,7 +109,7 @@ public class Robot {
                 botanMessageResponder.setAllReceived(false);
                 botanMessageResponder.setDescription(description);
                 botanMessageResponder.setPattern(pattern);
-                botanMessageResponder.setAction(action);
+                botanMessageResponder.setHandle(action);
             }
         });
     }

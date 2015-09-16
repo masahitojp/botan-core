@@ -7,14 +7,14 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 
-public class BotanMessageHandler {
+public final class BotanMessageHandler {
 
     private final Botan botan;
 
     private String description;
     private String patternString;
     private Pattern pattern;
-    private Consumer<BotanMessage> action;
+    private Consumer<BotanMessage> handle;
     private boolean allReceived = false;
 
     public BotanMessageHandler(final Botan botan) {
@@ -36,12 +36,12 @@ public class BotanMessageHandler {
         this.pattern = Pattern.compile(replyPattern);
     }
 
-    public final void setAction(final Consumer<BotanMessage> action) {
-        this.action = action;
+    public final void setHandle(final Consumer<BotanMessage> handle) {
+        this.handle = handle;
     }
 
     public final void apply(final BotanMessage message) {
-        this.action.accept(message);
+        this.handle.accept(message);
     }
 
     public final void setDescription(final String description) {

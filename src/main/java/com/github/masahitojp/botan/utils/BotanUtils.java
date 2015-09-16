@@ -18,8 +18,4 @@ public final class BotanUtils {
     public static Optional<String> envToOpt(final String envName) {
         return Optional.ofNullable(System.getenv(envName));
     }
-
-    public static String UpperUnderScoreToLowerDot(final String src) {
-        return src.toLowerCase().replace("_", ".");
-    }
 }
