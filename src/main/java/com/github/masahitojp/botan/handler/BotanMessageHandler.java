@@ -1,4 +1,4 @@
-package com.github.masahitojp.botan.responder;
+package com.github.masahitojp.botan.handler;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.message.BotanMessage;
@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 
-public class BotanMessageResponder {
+public class BotanMessageHandler {
 
     private final Botan botan;
 
@@ -17,7 +17,7 @@ public class BotanMessageResponder {
     private Consumer<BotanMessage> action;
     private boolean allReceived = false;
 
-    public BotanMessageResponder(final Botan botan) {
+    public BotanMessageHandler(final Botan botan) {
         this.botan = botan;
     }
 

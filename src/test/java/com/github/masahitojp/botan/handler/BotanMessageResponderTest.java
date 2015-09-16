@@ -1,4 +1,4 @@
-package com.github.masahitojp.botan.responder;
+package com.github.masahitojp.botan.handler;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.adapter.ComandLineAdapter;
@@ -11,7 +11,7 @@ public class BotanMessageResponderTest {
     @Test
     public void toStringTest() {
         final Botan botan = new Botan.BotanBuilder().setAdapter(new ComandLineAdapter()).build();
-        final BotanMessageResponder listener = new BotanMessageResponder(botan);
+        final BotanMessageHandler listener = new BotanMessageHandler(botan);
         listener.setAllReceived(true);
         listener.setDescription("test");
         listener.setPattern("pattern");

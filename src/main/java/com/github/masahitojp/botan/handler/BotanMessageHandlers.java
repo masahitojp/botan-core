@@ -1,8 +1,8 @@
-package com.github.masahitojp.botan.responder;
+package com.github.masahitojp.botan.handler;
 
 import com.github.masahitojp.botan.Robot;
 
-public interface BotanMessageResponderRegister {
+public interface BotanMessageHandlers {
     /**
      * register the bot method
      * use Robot#respond or Robot#hear
@@ -11,6 +11,7 @@ public interface BotanMessageResponderRegister {
      */
     void register(final Robot robot);
 
+    @SuppressWarnings("unused")
     default void initialize(final Robot robot) {
     }
 

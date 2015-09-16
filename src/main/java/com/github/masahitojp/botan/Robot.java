@@ -1,10 +1,10 @@
 package com.github.masahitojp.botan;
 
 import com.github.masahitojp.botan.brain.BotanBrain;
-import com.github.masahitojp.botan.responder.BotanMessageResponder;
-import com.github.masahitojp.botan.responder.BotanMessageResponderBuilder;
-import com.github.masahitojp.botan.responder.BotanMessageResponderRegister;
-import com.github.masahitojp.botan.responder.BotanMessageResponderSetter;
+import com.github.masahitojp.botan.handler.BotanMessageHandler;
+import com.github.masahitojp.botan.handler.BotanMessageHandlerBuilder;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
+import com.github.masahitojp.botan.handler.BotanMessageHandlerSetter;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import lombok.Getter;
@@ -19,19 +19,19 @@ import java.util.regex.Matcher;
 public class Robot {
     private final Botan botan;
     @Getter
-    private final List<BotanMessageResponder> listeners = new ArrayList<>();
-    private final List<BotanMessageResponderSetter> actions = new ArrayList<>();
-    private final List<BotanMessageResponderRegister> registers = new ArrayList<>();
+    private final List<BotanMessageHandler> listeners = new ArrayList<>();
+    private final List<BotanMessageHandlerSetter> actions = new ArrayList<>();
+    private final List<BotanMessageHandlers> registers = new ArrayList<>();
     public Robot(final Botan botan) {
         this.botan = botan;
     }
 
     private void setActions() {
         final Reflections reflections = new Reflections();
-        Set<Class<? extends BotanMessageResponderRegister>> classes = reflections.getSubTypesOf(BotanMessageResponderRegister.class);
+        Set<Class<? extends BotanMessageHandlers>> classes = reflections.getSubTypesOf(BotanMessageHandlers.class);
         classes.forEach(clazz -> {
             try {
-                final BotanMessageResponderRegister register = clazz.newInstance();
+                final BotanMessageHandlers register = clazz.newInstance();
                 register.initialize(this);
                 register.register(this);
                 registers.add(register);
@@ -44,7 +44,7 @@ public class Robot {
 
     final void run() {
         setActions();
-        this.actions.forEach(x -> listeners.add(BotanMessageResponderBuilder.build(this.botan, x)));
+        this.actions.forEach(x -> listeners.add(BotanMessageHandlerBuilder.build(this.botan, x)));
     }
 
     public final void receive(BotanMessageSimple message) {
@@ -66,11 +66,11 @@ public class Robot {
 
 
     final void beforeShutdown() {
-        this.registers.forEach(BotanMessageResponderRegister::beforeShutdown);
+        this.registers.forEach(BotanMessageHandlers::beforeShutdown);
     }
 
     public final void hear(final String pattern, final String description, final Consumer<BotanMessage> action) {
-        actions.add(new BotanMessageResponderSetter() {
+        actions.add(new BotanMessageHandlerSetter() {
             @Override
             public String getDescription() {
                 return description;
@@ -82,7 +82,7 @@ public class Robot {
             }
 
             @Override
-            public void accept(BotanMessageResponder botanMessageResponder) {
+            public void accept(BotanMessageHandler botanMessageResponder) {
                 botanMessageResponder.setAllReceived(true);
                 botanMessageResponder.setDescription(description);
                 botanMessageResponder.setPattern(pattern);
@@ -92,7 +92,7 @@ public class Robot {
     }
 
     public final void respond(final String pattern, final String description, final Consumer<BotanMessage> action) {
-        actions.add(new BotanMessageResponderSetter() {
+        actions.add(new BotanMessageHandlerSetter() {
             @Override
             public String getDescription() {
                 return description;
@@ -104,7 +104,7 @@ public class Robot {
             }
 
             @Override
-            public void accept(BotanMessageResponder botanMessageResponder) {
+            public void accept(BotanMessageHandler botanMessageResponder) {
                 botanMessageResponder.setAllReceived(false);
                 botanMessageResponder.setDescription(description);
                 botanMessageResponder.setPattern(pattern);
