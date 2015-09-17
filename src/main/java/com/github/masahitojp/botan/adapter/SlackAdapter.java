@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Adapter for Slack.com
  */
+@SuppressWarnings("unused")
 @Slf4j
 public final class SlackAdapter implements BotanAdapter {
 

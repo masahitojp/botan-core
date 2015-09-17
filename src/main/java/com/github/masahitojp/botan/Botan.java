@@ -7,7 +7,6 @@ import com.github.masahitojp.botan.brain.LocalBrain;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
-
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
@@ -27,10 +26,35 @@ public final class Botan {
         this.robot = new Robot(this);
     }
 
+    private static String UpperUnderScoreToLowerDot(final String src) {
+        return src.toLowerCase().replace("_", ".");
+    }
+
+    static public void main(final String[] Args) {
+
+        final Botan botan = new Botan.BotanBuilder()
+                .addEnvironmentVariablesToGlobalProperties()
+                .build();
+
+        java.lang.Runtime.getRuntime().addShutdownHook(
+                new Thread() {
+                    @Override
+                    public void run() {
+                        botan.stop();
+                    }
+                }
+        );
+        try {
+            botan.start();
+        } catch (final BotanException e) {
+            log.warn("[Botan] {}", e);
+        }
+
+    }
+
     public final String getName() {
         return name;
     }
-
 
     public void say(BotanMessage message) {
         this.adapter.say(message);
@@ -67,6 +91,7 @@ public final class Botan {
         private BotanBrain brain;
         private HashMap<String, String> configs;
         private boolean useEnvironmentVariables = false;
+
         public BotanBuilder() {
         }
 
@@ -200,10 +225,5 @@ public final class Botan {
             this.brain.initialize();
             log.info("brain: {}", this.brain.getClass().getSimpleName());
         }
-    }
-
-
-    private static String UpperUnderScoreToLowerDot(final String src) {
-        return src.toLowerCase().replace("_", ".");
     }
 }

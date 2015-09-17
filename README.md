@@ -1,6 +1,6 @@
 # botan(牡丹)
 
-[![Circle CI](https://circleci.com/gh/masahitojp/botan.svg?style=svg)](https://circleci.com/gh/masahitojp/botan-core)
+[![Circle CI](https://circleci.com/gh/masahitojp/botan-core.svg?style=svg)](https://circleci.com/gh/masahitojp/botan-core)
 
 tiny chat bot framework for Java SE 8.(like a Hubot)
 
