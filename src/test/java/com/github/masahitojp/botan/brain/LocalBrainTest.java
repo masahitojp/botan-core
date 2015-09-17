@@ -26,8 +26,8 @@ public class LocalBrainTest {
 
         assertThat(data.get(key), is(Optional.empty()));
         assertThat(data.put(key, value), is(Optional.empty()));
-        assertThat(data.get(key), is(Optional.of(value)));
-        assertThat(data.delete(key), is(Optional.of(value)));
+        assertThat(data.get("test".getBytes()), is(Optional.of(value)));
+        assertThat(data.delete("test".getBytes()), is(Optional.of(value)));
         assertThat(data.get(key), is(Optional.empty()));
     }
 
