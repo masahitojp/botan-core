@@ -23,9 +23,9 @@ public final class BotanMessageHandler implements Comparable {
     }
 
     public final Pattern getPattern() {
-        return pattern;
+        return this.pattern;
     }
-
+    public final String getDescription() {return this.description;}
     public final void setPattern(final String str) {
         this.patternString = str;
         final String replyPattern;

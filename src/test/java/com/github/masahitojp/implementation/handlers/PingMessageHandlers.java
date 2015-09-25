@@ -9,7 +9,7 @@ public class PingMessageHandlers implements BotanMessageHandlers {
     @Override
     public void register(final Robot robot) {
         robot.respond(
-                "ping",
+                "ping$",
                 "ping method",
                 message -> message.reply("pong")
         );

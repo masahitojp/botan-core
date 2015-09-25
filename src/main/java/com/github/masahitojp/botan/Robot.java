@@ -23,8 +23,17 @@ public class Robot {
     private final List<BotanMessageHandlerSetter> actions = new ArrayList<>();
     private final List<BotanMessageHandlers> registers = new ArrayList<>();
 
+    private BotanMessageHandlers registersForTest;
+
     public Robot(final Botan botan) {
         this.botan = botan;
+    }
+
+    public Robot(final Botan botan, final BotanMessageHandlers registersForTest) {
+        this.botan = botan;
+        if (registersForTest != null) {
+            this.registersForTest = registersForTest;
+        }
     }
 
     private void setActions() {
@@ -44,7 +53,14 @@ public class Robot {
 
 
     final void run() {
-        setActions();
+        if (registersForTest == null) {
+            setActions();
+        } else {
+            registersForTest.initialize(this);
+            registersForTest.register(this);
+            registers.add(registersForTest);
+
+        }
         this.actions.forEach(x -> handlers.add(BotanMessageHandlerBuilder.build(this.botan, x)));
     }
 

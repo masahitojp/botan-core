@@ -47,6 +47,7 @@ dependencies {
     testCompile 'ch.qos.logback:logback-classic:1.1.3'
     testCompile "junit:junit:4.12"
     testCompile "org.hamcrest:java-hamcrest:2.0.0.0"
+    testCompile "org.jmockit:jmockit:1.19"
 }
 
 

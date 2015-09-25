@@ -5,6 +5,8 @@ import com.github.masahitojp.botan.adapter.ComandLineAdapter;
 import com.github.masahitojp.botan.brain.BotanBrain;
 import com.github.masahitojp.botan.brain.LocalBrain;
 import com.github.masahitojp.botan.exception.BotanException;
+import com.github.masahitojp.botan.handler.BotanMessageHandler;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,7 @@ public final class Botan {
         this.adapter = builder.adapter;
         this.name = builder.name;
         this.brain = builder.brain;
-        this.robot = new Robot(this);
+        this.robot = new Robot(this, builder.handlers);
     }
 
     private static String UpperUnderScoreToLowerDot(final String src) {
@@ -91,7 +93,7 @@ public final class Botan {
         private BotanBrain brain;
         private HashMap<String, String> configs;
         private boolean useEnvironmentVariables = false;
-
+        private BotanMessageHandlers handlers;
         public BotanBuilder() {
         }
 
@@ -101,6 +103,11 @@ public final class Botan {
             if (adapter.getFromAdapterName().isPresent()) {
                 this.name = adapter.getFromAdapterName().get();
             }
+            return this;
+        }
+
+        public final BotanBuilder setMessageHandlers(final BotanMessageHandlers handlers) {
+            this.handlers = handlers;
             return this;
         }
 
@@ -225,5 +232,8 @@ public final class Botan {
             this.brain.initialize();
             log.info("brain: {}", this.brain.getClass().getSimpleName());
         }
+    }
+    public final List<BotanMessageHandler> getHandlers() {
+        return robot.getHandlers();
     }
 }
