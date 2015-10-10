@@ -1,11 +1,11 @@
 package com.github.masahitojp.botan.brain;
 
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,27 +21,26 @@ public class LocalBrainTest {
 
     @Test
     public void testSet() {
-        final byte[] key = "test".getBytes();
-        final byte[] value = "test_abc".getBytes();
+        val key = "test";
+        val value = "test_abc";
 
-        assertThat(data.get(key), is(Optional.empty()));
-        assertThat(data.put(key, value), is(Optional.empty()));
-        assertThat(data.get("test".getBytes()), is(Optional.of(value)));
-        assertThat(data.delete("test".getBytes()), is(Optional.of(value)));
-        assertThat(data.get(key), is(Optional.empty()));
+        assertThat(data.getData().get(key), is(nullValue()));
+        assertThat(data.getData().put(key, value), is(nullValue()));
+        assertThat(data.getData().get("test"), is(value));
+        assertThat(data.getData().remove("test"), is(value));
+        assertThat(data.getData().get(key), is(nullValue()));
     }
 
     @Test
-    public void search() throws UnsupportedEncodingException {
-        final byte[] key = "test".getBytes("UTF-8");
-        final byte[] value = "test_abc".getBytes("UTF-8");
+    public void search() {
+        val key = "test";
+        val value = "test_abc";
 
+        data.getData().put(key, value);
+        data.getData().put("test2", "test2");
+        data.getData().put("key", "value");
 
-        data.put(key, value);
-        data.put("test2".getBytes("UTF-8"), "test2".getBytes("UTF-8"));
-        data.put("key".getBytes("UTF-8"), "value".getBytes("UTF-8"));
-
-        Set<byte[]> list = data.keys("test".getBytes("UTF-8"));
+        final List<String> list = data.getData().keySet().stream().filter(x -> x.startsWith("test")).collect(Collectors.toList());
         assertThat(list.size(), is(2));
         assertThat(list.contains(key), is(true));
 
