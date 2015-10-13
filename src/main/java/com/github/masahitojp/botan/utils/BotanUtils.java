@@ -16,6 +16,14 @@ public final class BotanUtils {
     }
 
     public static Optional<String> envToOpt(final String envName) {
-        return Optional.ofNullable(System.getenv(envName));
+        Optional<String> system = Optional.ofNullable(System.getProperty(envName));
+        if(system.isPresent()) {
+            return system;
+        }
+        return Optional.ofNullable(System.getenv(UpperUnderScoreToLowerDot(envName)));
+    }
+
+    private static String UpperUnderScoreToLowerDot(final String src) {
+        return src.toLowerCase().replace("_", ".");
     }
 }

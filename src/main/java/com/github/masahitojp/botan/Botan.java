@@ -28,10 +28,6 @@ public final class Botan {
         this.robot = new Robot(this, builder.handlers);
     }
 
-    private static String UpperUnderScoreToLowerDot(final String src) {
-        return src.toLowerCase().replace("_", ".");
-    }
-
     static public void main(final String[] Args) {
 
         final Botan botan = new Botan.BotanBuilder()
@@ -95,7 +91,6 @@ public final class Botan {
         private BotanAdapter adapter;
         private String name = DEFAULT_NAME;
         private BotanBrain brain;
-        private HashMap<String, String> configs;
         private boolean useEnvironmentVariables = false;
         private BotanMessageHandlers handlers;
         public BotanBuilder() {
@@ -125,12 +120,6 @@ public final class Botan {
         }
 
         @SuppressWarnings("unused")
-        public final BotanBuilder addGlobalPropertiesAtTopPriority(final HashMap<String, String> configs) {
-            this.configs = configs;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
         public final BotanBuilder addEnvironmentVariablesToGlobalProperties() {
             this.useEnvironmentVariables = true;
             return this;
@@ -138,22 +127,9 @@ public final class Botan {
 
         @SuppressWarnings("unused")
         public final Botan build() {
-            setGlobalProperties();
             setDefaultAdapter();
             setDefaultBrain();
             return new Botan(this);
-        }
-
-        private void setGlobalProperties() {
-            final Properties properties = System.getProperties();
-
-            if (useEnvironmentVariables) {
-                final Map<String, String> env = System.getenv();
-                env.entrySet().stream().forEach(e -> properties.merge(UpperUnderScoreToLowerDot(e.getKey()), e.getValue(), (oldValue, value) -> e.getValue()));
-            }
-            if (configs != null) {
-                this.configs.entrySet().stream().forEach(e -> properties.merge(UpperUnderScoreToLowerDot(e.getKey()), e.getValue(), (oldValue, value) -> e.getValue()));
-            }
         }
 
         private void setDefaultAdapter() {

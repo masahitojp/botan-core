@@ -4,6 +4,7 @@ import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
+import com.github.masahitojp.botan.utils.BotanUtils;
 import com.ullink.slack.simpleslackapi.SlackSession;
 import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +30,11 @@ public final class SlackRTMAdapter implements BotanAdapter {
     private final AtomicReference<Pattern> patternRef = new AtomicReference<>();
 
     public SlackRTMAdapter() {
-        this(Optional.ofNullable(System.getProperty("slack.api.token")).orElse(""));
+        this(BotanUtils.envToOpt("SLACK_API_TOKEN").orElse(""));
     }
     public SlackRTMAdapter(final String apiToken) {
         if(apiToken == null || apiToken.equals("")) {
-            throw new NullPointerException("slack.api.token is null");
+            throw new NullPointerException("SLACK_API_TOKEN is null");
         }
         this.apiToken = apiToken;
     }

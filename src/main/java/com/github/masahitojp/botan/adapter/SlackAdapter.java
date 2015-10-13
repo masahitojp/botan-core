@@ -4,6 +4,7 @@ import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import com.github.masahitojp.botan.exception.BotanException;
+import com.github.masahitojp.botan.utils.BotanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
@@ -36,10 +37,10 @@ public final class SlackAdapter implements BotanAdapter {
     private Botan botan;
 
     public SlackAdapter() {
-        this.team = Optional.ofNullable(System.getProperty("slack.team")).orElse("");
-        this.user = Optional.ofNullable(System.getProperty("slack.username")).orElse("");
-        this.pswd = Optional.ofNullable(System.getProperty("slack.password")).orElse("");
-        this.room = Optional.ofNullable(System.getProperty("slack.channel")).orElse("");
+        this.team = BotanUtils.envToOpt("SLACK_TEAM").orElse("");
+        this.user = BotanUtils.envToOpt("SLACK_USERNAME").orElse("");
+        this.pswd = BotanUtils.envToOpt("SLACK_PASSWORD").orElse("");
+        this.room = BotanUtils.envToOpt("SLACK_CHANNEL").orElse("");
     }
 
     public SlackAdapter(String team, String user, String pswd, String room) {
