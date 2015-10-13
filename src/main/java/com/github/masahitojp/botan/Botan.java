@@ -17,7 +17,7 @@ import java.util.*;
 @Slf4j
 public final class Botan {
     public final BotanBrain brain;
-    private final String name;
+    private String name;
     private final BotanAdapter adapter;
     private final Robot robot;
 
@@ -76,6 +76,11 @@ public final class Botan {
         log.info("bot start");
         adapter.initialize(this);
         adapter.run();
+
+        // adapterはRunしたあとじゃないと名前がとれないことがあるため
+        if (adapter.getFromAdapterName().isPresent()) {
+            this.name = adapter.getFromAdapterName().get();
+        }
     }
 
     @SuppressWarnings("unused")
@@ -100,9 +105,6 @@ public final class Botan {
         @SuppressWarnings("unused")
         public final BotanBuilder setAdapter(final BotanAdapter adapter) {
             this.adapter = adapter;
-            if (adapter.getFromAdapterName().isPresent()) {
-                this.name = adapter.getFromAdapterName().get();
-            }
             return this;
         }
 
