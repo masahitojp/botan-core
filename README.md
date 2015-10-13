@@ -49,7 +49,7 @@ public class PingMessageHandlers implements BotanMessageHandlers {
     @Override
     public void register(final Robot robot) {
         robot.respond(
-                "ping",
+                "ping\z",
                 "ping method",
                 message -> message.reply("pong")
         );
@@ -67,7 +67,7 @@ apply plugin: 'java'
 repositories.mavenCentral()
 
 dependencies {
-	compile compile 'com.github.masahitojp:botan:0.0.1.+'
+	compile compile 'com.github.masahitojp:botan:0.2.+.+'
 }
 
 sourceCompatibility = targetCompatibility = 1.8
@@ -77,15 +77,16 @@ sourceCompatibility = targetCompatibility = 1.8
 
     show your slack team
 
-
+    
 ## Features
 Currently, supports following adapters and brains:
 
  * Adapter
   * [Slack](https://slack.com/)
  * Brain
-  * [MapDB](http://www.mapdb.org/)
-
+  * [Redis](http://redis.io/) 
+  * [botan-mapdb](https://github.com/masahitojp/botan-mapdb)([MapDB](http://www.mapdb.org/))
+   
 ## License
 
 Apache License, Version 2.0
@@ -115,7 +116,7 @@ public class PingMessageHandlers implements BotanMessageHandlers {
     @Override
     public void register(final Robot robot) {
         robot.respond(
-                "ping",
+                "ping\z",
                 "ping method",
                 message -> message.reply("pong")
         );
