@@ -63,7 +63,6 @@ public final class Botan {
     }
 
     private Botan run() {
-        this.robot.run();
         return this;
     }
 
@@ -75,12 +74,16 @@ public final class Botan {
     public final void start() throws BotanException {
         log.info("bot start");
         adapter.initialize(this);
-        adapter.run();
 
         // adapterはRunしたあとじゃないと名前がとれないことがあるため
         if (adapter.getFromAdapterName().isPresent()) {
             this.name = adapter.getFromAdapterName().get();
         }
+        log.info("bot name : {}", this.name);
+
+        this.robot.run();
+        adapter.run();
+
     }
 
     @SuppressWarnings("unused")

@@ -25,6 +25,7 @@ public final class SlackRTMAdapter implements BotanAdapter {
     private final AtomicBoolean flag = new AtomicBoolean(true);
     private Botan botan;
     private SlackSession session;
+    private Thread thread;
     private final AtomicReference<Pattern> patternRef = new AtomicReference<>();
 
     public SlackRTMAdapter() {
@@ -58,33 +59,29 @@ public final class SlackRTMAdapter implements BotanAdapter {
 
     @Override
     public void run() throws BotanException {
-        session = SlackSessionFactory.createWebSocketSlackSession(this.apiToken);
-        try {
-            session.connect();
-            session.addMessagePostedListener((e, s)
-                    -> {
-                        final String body = convertSlackMessageContentForBotan(e.getMessageContent());
-                        botan.receive(new BotanMessageSimple(
-                                body,
-                                e.getSender().getUserName(),
-                                e.getSender().getUserName(),
-                                e.getChannel().getId(),
-                                e.getEventType().ordinal()
+        // bind event
+        session.addMessagePostedListener((e, s)
+                        -> {
+                    final String body = convertSlackMessageContentForBotan(e.getMessageContent());
+                    botan.receive(new BotanMessageSimple(
+                            body,
+                            e.getSender().getUserName(),
+                            e.getSender().getUserName(),
+                            e.getChannel().getId(),
+                            e.getEventType().ordinal()
+                    ));
+                }
+        );
 
-                        ));
-                    }
-            );
+        new Thread(() -> {
             while (flag.get()) {
-                Thread.sleep(1000);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
-        } catch (final IOException | InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                session.disconnect();
-            } catch (final  IOException ignore) {
-            }
-        }
+        }).start();
 
     }
 
@@ -96,12 +93,25 @@ public final class SlackRTMAdapter implements BotanAdapter {
 
     @Override
     public void initialize(Botan botan) {
+
+        session = SlackSessionFactory.createWebSocketSlackSession(this.apiToken);
+        try {
+            session.connect();
+        } catch (IOException e1) {
+            log.warn("{}", e1);
+        }
         this.botan = botan;
     }
 
     @Override
     public void beforeShutdown() {
         flag.compareAndSet(true, false);
+        try {
+            session.disconnect();
+            thread.join();
+        } catch (IOException | InterruptedException e1) {
+            log.warn("{}", e1);
+        }
     }
 
 

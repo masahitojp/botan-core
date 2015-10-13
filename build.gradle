@@ -5,7 +5,7 @@ apply plugin: 'idea'
 
 group = 'com.github.masahitojp'
 archivesBaseName = "botan-core"
-version = '0.1.0.0'
+version = '0.1.1.1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -79,7 +79,7 @@ signing {
     sign configurations.archives
 }
 
-    uploadArchives {
+uploadArchives {
     repositories {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
