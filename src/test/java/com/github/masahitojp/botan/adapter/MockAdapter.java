@@ -1,4 +1,4 @@
-package com.github.masahitojp.botan.brain;
+package com.github.masahitojp.botan.adapter;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.adapter.BotanAdapter;

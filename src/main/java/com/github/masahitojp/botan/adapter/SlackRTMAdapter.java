@@ -32,6 +32,9 @@ public final class SlackRTMAdapter implements BotanAdapter {
         this(Optional.ofNullable(System.getProperty("slack.api.token")).orElse(""));
     }
     public SlackRTMAdapter(final String apiToken) {
+        if(apiToken == null || apiToken.equals("")) {
+            throw new NullPointerException("slack.api.token is null");
+        }
         this.apiToken = apiToken;
     }
 

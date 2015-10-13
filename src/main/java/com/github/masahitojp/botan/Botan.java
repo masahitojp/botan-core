@@ -62,10 +62,6 @@ public final class Botan {
         this.adapter.say(message);
     }
 
-    private Botan run() {
-        return this;
-    }
-
     public final void receive(BotanMessageSimple message) {
         this.robot.receive(message);
     }
@@ -145,7 +141,7 @@ public final class Botan {
             setGlobalProperties();
             setDefaultAdapter();
             setDefaultBrain();
-            return new Botan(this).run();
+            return new Botan(this);
         }
 
         private void setGlobalProperties() {

@@ -2,12 +2,14 @@ package com.github.masahitojp.implementation.handlers;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.brain.LocalBrain;
-import com.github.masahitojp.botan.brain.MockAdapter;
+import com.github.masahitojp.botan.adapter.MockAdapter;
+import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 
 import mockit.Mock;
 import mockit.MockUp;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,12 +23,18 @@ import static org.hamcrest.MatcherAssert.*;
 public class PingHandlersTest {
     Botan botan;
     @Before
-    public void startUp() {
+    public void startUp() throws BotanException {
         botan = new Botan.BotanBuilder()
                 .setAdapter(new MockAdapter())
                 .setBrain(new LocalBrain())
                 .setMessageHandlers(new PingMessageHandlers())
                 .build();
+        botan.start();
+    }
+
+    @After
+    public void tearDown() {
+        botan.stop();
     }
 
     @Test

@@ -56,7 +56,7 @@ public final class BotanMessageHandler implements Comparable {
     @Override
     public String toString() {
         final String prefix = this.allReceived ? "" : botan.getName() + " ";
-        return String.format("| %s%s - %s\n", prefix, this.patternString, this.description);
+        return String.format("> %s%s - %s\n", prefix, this.patternString, this.description);
     }
 
     @Override
