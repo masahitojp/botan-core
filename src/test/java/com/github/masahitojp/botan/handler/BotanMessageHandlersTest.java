@@ -15,7 +15,7 @@ public class BotanMessageHandlersTest {
         handler.setAllReceived(true);
         handler.setDescription("test");
         handler.setPattern("pattern");
-        assertThat(handler.toString(), is("> pattern - test\n"));
+        assertThat(handler.toString(), is("> pattern - test"));
     }
 
 }

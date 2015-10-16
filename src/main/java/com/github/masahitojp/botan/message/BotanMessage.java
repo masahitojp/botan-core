@@ -2,12 +2,14 @@ package com.github.masahitojp.botan.message;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.brain.BotanBrain;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.regex.Matcher;
 
 @ToString
+@EqualsAndHashCode
 public final class BotanMessage {
     private final Botan botan;
     @Getter

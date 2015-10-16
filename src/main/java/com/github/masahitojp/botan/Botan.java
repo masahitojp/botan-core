@@ -31,7 +31,6 @@ public final class Botan {
     static public void main(final String[] Args) {
 
         final Botan botan = new Botan.BotanBuilder()
-                .addEnvironmentVariablesToGlobalProperties()
                 .build();
 
         java.lang.Runtime.getRuntime().addShutdownHook(
@@ -91,7 +90,6 @@ public final class Botan {
         private BotanAdapter adapter;
         private String name = DEFAULT_NAME;
         private BotanBrain brain;
-        private boolean useEnvironmentVariables = false;
         private BotanMessageHandlers handlers;
         public BotanBuilder() {
         }
@@ -116,12 +114,6 @@ public final class Botan {
         @SuppressWarnings("unused")
         public final BotanBuilder setBrain(final BotanBrain brain) {
             this.brain = brain;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public final BotanBuilder addEnvironmentVariablesToGlobalProperties() {
-            this.useEnvironmentVariables = true;
             return this;
         }
 

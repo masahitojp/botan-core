@@ -7,10 +7,11 @@ import com.github.masahitojp.botan.handler.BotanMessageHandlerSetter;
 import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
-import lombok.Getter;
+
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -18,7 +19,11 @@ import java.util.regex.Matcher;
 
 public class Robot {
     private final Botan botan;
-    @Getter
+
+    public List<BotanMessageHandler> getHandlers() {
+        return Collections.unmodifiableList(handlers);
+    }
+
     private final List<BotanMessageHandler> handlers = new ArrayList<>();
     private final List<BotanMessageHandlerSetter> actions = new ArrayList<>();
     private final List<BotanMessageHandlers> registers = new ArrayList<>();

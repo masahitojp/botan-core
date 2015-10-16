@@ -13,7 +13,6 @@ public class SlackBot {
 
         final Botan botan = new Botan.BotanBuilder()
                 .setAdapter(new ComandLineAdapter())
-                .addEnvironmentVariablesToGlobalProperties()
                 .setMessageHandlers(new PingMessageHandlers())
                 .build();
         try {
