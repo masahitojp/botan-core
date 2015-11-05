@@ -10,6 +10,7 @@ import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
@@ -77,26 +78,27 @@ public final class SlackRTMAdapter implements BotanAdapter {
                 }
         );
 
-        new Thread(() -> {
+        thread = new Thread(() -> {
             while (flag.get()) {
                 try {
-                    Thread.sleep(1000);
+                    TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
             }
-        }).start();
+        });
+        thread.start();
 
     }
 
     @Override
-    public void say(BotanMessage message) {
+    public void say(final BotanMessage message) {
         session.sendMessageOverWebSocket(session.findChannelById(message.getTo()), message.getBody(), null);
 
     }
 
     @Override
-    public void initialize(Botan botan) {
+    public void initialize(final Botan botan) {
 
         session = SlackSessionFactory.createWebSocketSlackSession(this.apiToken);
         try {
@@ -113,7 +115,7 @@ public final class SlackRTMAdapter implements BotanAdapter {
         try {
             session.disconnect();
             thread.join();
-        } catch (IOException | InterruptedException e1) {
+        } catch (final IOException | InterruptedException e1) {
             log.warn("{}", e1);
         }
     }
@@ -121,6 +123,6 @@ public final class SlackRTMAdapter implements BotanAdapter {
 
 
     public Optional<String> getFromAdapterName() {
-        return Optional.of(session.sessionPersona().getUserName());
+        return Optional.ofNullable(session.sessionPersona().getUserName());
     }
 }
