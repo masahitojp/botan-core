@@ -25,7 +25,6 @@ public class SlackBot {
     static public void main(final String[] Args) {
 
         final Botan botan = new Botan.BotanBuilder()
-                .addEnvironmentVariablesToGlobalProperties()
                 .build();
         try {
             botan.start();
@@ -67,7 +66,7 @@ apply plugin: 'java'
 repositories.mavenCentral()
 
 dependencies {
-	compile compile 'com.github.masahitojp:botan:0.2.+.+'
+	compile compile 'com.github.masahitojp:botan:0.3.+'
 }
 
 sourceCompatibility = targetCompatibility = 1.8
