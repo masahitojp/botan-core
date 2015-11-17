@@ -3,7 +3,6 @@ package com.github.masahitojp.botan.handler;
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.message.BotanMessage;
 
-import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -16,6 +15,7 @@ public final class BotanMessageHandler implements Comparable {
     private String patternString;
     private Pattern pattern;
     private Consumer<BotanMessage> handle;
+    private boolean hidden = false;
     private boolean allReceived = false;
 
     public BotanMessageHandler(final Botan botan) {
@@ -53,14 +53,20 @@ public final class BotanMessageHandler implements Comparable {
         this.allReceived = allReceived;
     }
 
+    public final void setHidden (final boolean hidden) {this.hidden = hidden;}
+
     @Override
     public String toString() {
-        final String prefix = this.allReceived ? "" : botan.getName() + " ";
-        return String.format("> %s%s - %s", prefix, this.patternString, this.description);
+        if (hidden) {
+            return "";
+        } else {
+            final String prefix = this.allReceived ? "" : botan.getName() + " ";
+            return String.format("> %s%s - %s", prefix, this.patternString, this.description);
+        }
     }
 
     @Override
-    public int compareTo(@Nonnull Object o) {
+    public int compareTo(Object o) {
         BotanMessageHandler other = (BotanMessageHandler) o;
         if (other.allReceived) return 1;
         else return -1;

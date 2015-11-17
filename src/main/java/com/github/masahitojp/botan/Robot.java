@@ -91,7 +91,12 @@ public class Robot {
         this.registers.forEach(BotanMessageHandlers::beforeShutdown);
     }
 
+
     public final void hear(final String pattern, final String description, final Consumer<BotanMessage> action) {
+        this.hear(pattern, description, action, false);
+    }
+
+    public final void hear(final String pattern, final String description, final Consumer<BotanMessage> action, final boolean hidden) {
         actions.add(new BotanMessageHandlerSetter() {
             @Override
             public String getDescription() {
@@ -109,6 +114,7 @@ public class Robot {
                 botanMessageResponder.setDescription(description);
                 botanMessageResponder.setPattern(pattern);
                 botanMessageResponder.setHandle(action);
+                botanMessageResponder.setHidden(hidden);
             }
         });
     }
