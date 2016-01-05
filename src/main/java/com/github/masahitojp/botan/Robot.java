@@ -8,12 +8,18 @@ import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 
+import com.github.masahitojp.botan.router.HttpRouterServerInitializer;
+import com.github.masahitojp.botan.router.Route;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.router.Router;
 import org.reflections.Reflections;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 
@@ -27,7 +33,7 @@ public class Robot {
     private final List<BotanMessageHandler> handlers = new ArrayList<>();
     private final List<BotanMessageHandlerSetter> actions = new ArrayList<>();
     private final List<BotanMessageHandlers> registers = new ArrayList<>();
-
+    private final AtomicReference<Thread> web = new AtomicReference<>();
     private BotanMessageHandlers registersForTest;
 
     public Robot(final Botan botan) {
@@ -67,6 +73,38 @@ public class Robot {
 
         }
         this.actions.forEach(x -> handlers.add(BotanMessageHandlerBuilder.build(this.botan, x)));
+        startWeb();
+
+    }
+    private void startWeb() {
+        web.set(new Thread(() -> {
+            final Router<Route> router = new Router<>()
+                    .notFound((Route) (request, response) -> response.content("404 Not Found"))
+                    .GET("/", (Route) (request, response) -> response.content("Index page"));
+
+            httpget.forEach(router::GET);
+
+            final NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
+            final NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+            try {
+                final ServerBootstrap b = new ServerBootstrap();
+                b.group(bossGroup, workerGroup)
+                        .childOption(ChannelOption.TCP_NODELAY, java.lang.Boolean.TRUE)
+                        .childOption(ChannelOption.SO_KEEPALIVE, java.lang.Boolean.TRUE)
+                        .channel(NioServerSocketChannel.class)
+                        .childHandler(new HttpRouterServerInitializer(router));
+
+                final Channel ch = b.bind(8000).sync().channel();
+                ch.closeFuture().sync();
+            } catch (final Exception ignore) {
+                //
+            } finally {
+                bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
+            }
+        }));
+        web.get().start();
     }
 
     public final void receive(BotanMessageSimple message) {
@@ -88,6 +126,9 @@ public class Robot {
 
 
     final void beforeShutdown() {
+        if(web.get() != null) {
+            web.get().interrupt();
+        }
         this.registers.forEach(BotanMessageHandlers::beforeShutdown);
     }
 
@@ -139,6 +180,12 @@ public class Robot {
                 botanMessageResponder.setHandle(action);
             }
         });
+    }
+
+    protected final Map<String, Route> httpget = new HashMap<>();
+
+    public final void routerGet(String path, Route route) {
+        httpget.put(path, route);
     }
 
 
