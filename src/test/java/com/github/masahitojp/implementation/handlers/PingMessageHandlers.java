@@ -15,6 +15,7 @@ public class PingMessageHandlers implements BotanMessageHandlers {
                 message -> message.reply("pong")
         );
 
+        robot.routerGet("/ping/", (req, res) -> 200);
         robot.routerGet("/ping/:id", (req, res) -> {
                     robot.send(new BotanMessageSimple("pong"));
                     return res.content(String.format("{ \"response\": \"pong\", \"id\": %s}", req.params("id").orElse("000"))).type("application/json; charset=utf-8");

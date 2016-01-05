@@ -37,17 +37,35 @@ public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpReq
 	}
 
 	private static HttpResponse createResponse(HttpRequest req, Router<Route> router) {
-		RouteResult<Route> routeResult = router.route(req.getMethod(), req.getUri());
-		final BotanHttpResponse obj = routeResult.target().handle(new BotanHttpRequest(routeResult), new BotanHttpResponse());
-		final String content = obj.content();
+		final RouteResult<Route> routeResult = router.route(req.getMethod(), req.getUri());
 
-		FullHttpResponse res = new DefaultFullHttpResponse(
-				HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
-				Unpooled.copiedBuffer(content, CharsetUtil.UTF_8)
-		);
-		res.headers().set(HttpHeaders.Names.CONTENT_TYPE, obj.type());
-		res.headers().set(HttpHeaders.Names.CONTENT_LENGTH, res.content().readableBytes());
-		return res;
+		final BotanHttpResponse res = new BotanHttpResponse();
+		final Object obj = routeResult.target().handle(new BotanHttpRequest(routeResult), res);
+		final String content;
+		final String type;
+		final HttpResponseStatus responseStatus;
+		if (obj instanceof BotanHttpResponse) {
+			content = ((BotanHttpResponse) obj).content();
+			type = ((BotanHttpResponse) obj).type();
+			responseStatus = HttpResponseStatus.OK;
+		} else if (obj instanceof Integer) {
+			content= res.content();
+			type = res.type();
+			responseStatus = HttpResponseStatus.valueOf((int)obj);
+			return new DefaultFullHttpResponse(
+					HttpVersion.HTTP_1_1, responseStatus);
+		} else {
+			content= obj.toString();
+			type = res.type();
+			responseStatus = HttpResponseStatus.OK;
+		}
+		final FullHttpResponse response = new DefaultFullHttpResponse(
+				HttpVersion.HTTP_1_1, responseStatus,
+				Unpooled.copiedBuffer(content, CharsetUtil.UTF_8));
+
+		response.headers().set(HttpHeaders.Names.CONTENT_TYPE, type);
+		response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, response.content().readableBytes());
+		return response;
 	}
 
 	private static ChannelFuture flushResponse(ChannelHandlerContext ctx, HttpRequest req, HttpResponse res) {

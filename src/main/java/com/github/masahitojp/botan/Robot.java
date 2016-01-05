@@ -79,8 +79,7 @@ public class Robot {
     private void startWeb() {
         web.set(new Thread(() -> {
             final Router<Route> router = new Router<>()
-                    .notFound((Route) (request, response) -> response.content("404 Not Found"))
-                    .GET("/", (Route) (request, response) -> response.content("Index page"));
+                    .GET("/", (Route) (request, response) -> "Index page");
 
             httpget.forEach(router::GET);
 
