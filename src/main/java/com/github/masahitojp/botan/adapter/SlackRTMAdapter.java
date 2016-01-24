@@ -5,7 +5,9 @@ import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import com.github.masahitojp.botan.utils.BotanUtils;
+import com.ullink.slack.simpleslackapi.SlackChannel;
 import com.ullink.slack.simpleslackapi.SlackSession;
+import com.ullink.slack.simpleslackapi.SlackUser;
 import com.ullink.slack.simpleslackapi.impl.SlackSessionFactory;
 import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
@@ -72,7 +74,7 @@ public final class SlackRTMAdapter implements BotanAdapter {
                             body,
                             e.getSender().getUserName(),
                             e.getSender().getUserName(),
-                            e.getChannel().getId(),
+                            e.getChannel().getName(),
                             e.getEventType().ordinal()
                     ));
                 }
@@ -93,8 +95,19 @@ public final class SlackRTMAdapter implements BotanAdapter {
 
     @Override
     public void say(final BotanMessage message) {
-        session.sendMessageOverWebSocket(session.findChannelById(message.getTo()), message.getBody(), null);
-
+        SlackChannel slackSession = session.findChannelByName(message.getTo());
+        if (slackSession == null) {
+            slackSession = session.findChannelById(message.getTo());
+        }
+        if (slackSession == null) {
+            final SlackUser user = session.findUserByUserName(message.getTo());
+            if(user != null)slackSession = session.findChannelById(user.getId());
+        }
+        if (slackSession != null) {
+            session.sendMessageOverWebSocket(slackSession, message.getBody(), null);
+        } else {
+            log.warn("reply failure {}", message.getTo());
+        }
     }
 
     @Override
@@ -103,7 +116,7 @@ public final class SlackRTMAdapter implements BotanAdapter {
         session = SlackSessionFactory.createWebSocketSlackSession(this.apiToken);
         try {
             session.connect();
-        } catch (IOException e1) {
+        } catch (final IOException e1) {
             log.warn("{}", e1);
         }
         this.botan = botan;
