@@ -20,5 +20,9 @@ public class PingMessageHandlers implements BotanMessageHandlers {
                     robot.send(new BotanMessageSimple("pong"));
                     return res.content(String.format("{ \"response\": \"pong\", \"id\": %s}", req.params("id").orElse("000"))).type("application/json; charset=utf-8");
                 });
+        robot.routerPost("/ping/:id", (req, res) -> {
+            System.out.println(req.body());
+            return res.content(String.format("{ \"response\": \"pong\", \"id\": %s}", req.params("id").orElse("000"))).type("application/json; charset=utf-8");
+        });
     }
 }

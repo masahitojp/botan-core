@@ -79,7 +79,7 @@ public class Robot {
 
     }
     private void startWeb() {
-        if (httpget.size() > 0) {
+        if (httpget.size() + httppost.size() >0) {
             web.set(new Thread(() -> {
                 final String addr = BotanUtils.envToOpt("HTTP_IP_ADDR").orElse("0.0.0.0");
                 final int port = Integer.valueOf(BotanUtils.envToOpt("HTTP_PORT").orElse("8080"));
@@ -87,7 +87,7 @@ public class Robot {
                         .GET("/", (request, response) -> "Index page");
 
                 httpget.forEach(router::GET);
-
+                httppost.forEach(router::POST);
                 final NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
                 final NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -188,9 +188,13 @@ public class Robot {
     }
 
     protected final Map<String, Route> httpget = new HashMap<>();
+    protected final Map<String, Route> httppost = new HashMap<>();
 
     public final void routerGet(String path, Route route) {
         httpget.put(path, route);
+    }
+    public final void routerPost(String path, Route route) {
+        httppost.put(path, route);
     }
 
 

@@ -1,46 +1,64 @@
 package com.github.masahitojp.botan.router;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.router.RouteResult;
 import io.netty.handler.codec.http.router.Router;
 import io.netty.util.CharsetUtil;
 
 @ChannelHandler.Sharable
-public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpRequest> {
+public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpObject> {
 	private final Router<Route> router;
-
+	private HttpRequest request;
+	private final StringBuilder buf = new StringBuilder();
 	public HttpRouterServerHandler(Router<Route> router) {
 		this.router = router;
 	}
 
 	@Override
-	public void channelRead0(ChannelHandlerContext ctx, HttpRequest req) {
-		if (HttpHeaders.is100ContinueExpected(req)) {
-			ctx.writeAndFlush(new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.CONTINUE));
-			return;
+	public void channelReadComplete(ChannelHandlerContext ctx) {
+		ctx.flush();
+	}
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+		cause.printStackTrace();
+		ctx.close();
+	}
+	@Override
+	public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
+		if (msg instanceof HttpRequest) {
+			final HttpRequest request = this.request = (HttpRequest) msg;
+			if (HttpHeaders.is100ContinueExpected(request)) {
+				ctx.writeAndFlush(new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.CONTINUE));
+				return;
+			}
 		}
+		if (msg instanceof HttpContent) {
+			final HttpContent httpContent = (HttpContent) msg;
 
-		HttpResponse res = createResponse(req, router);
-		flushResponse(ctx, req, res);
+			ByteBuf content = httpContent.content();
+			if (content.isReadable()) {
+				// http body
+				buf.append(content.toString(CharsetUtil.UTF_8));
+			}
+
+			if (msg instanceof LastHttpContent) {
+				HttpResponse res = createResponse(request, router,buf.toString());
+				flushResponse(ctx, request, res);
+			}
+		}
 	}
 
-	private static HttpResponse createResponse(HttpRequest req, Router<Route> router) {
+	private static HttpResponse createResponse(HttpRequest req, Router<Route> router, String body) {
 		final RouteResult<Route> routeResult = router.route(req.getMethod(), req.getUri());
 		if (routeResult != null) {
 			final BotanHttpResponse res = new BotanHttpResponse();
-			final Object obj = routeResult.target().handle(new BotanHttpRequest(routeResult), res);
+			final Object obj = routeResult.target().handle(new BotanHttpRequest(routeResult, body), res);
 			final String content;
 			final String type;
 			final HttpResponseStatus responseStatus;
@@ -70,12 +88,8 @@ public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpReq
 		}
 	}
 
-	private static ChannelFuture flushResponse(ChannelHandlerContext ctx, HttpRequest req, HttpResponse res) {
-		if (!HttpHeaders.isKeepAlive(req)) {
-			return ctx.writeAndFlush(res).addListener(ChannelFutureListener.CLOSE);
-		} else {
-			res.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
-			return ctx.writeAndFlush(res);
-		}
+	private static void flushResponse(ChannelHandlerContext ctx, HttpRequest req, HttpResponse res) {
+		ctx.write(res);
+		ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
 	}
 }
