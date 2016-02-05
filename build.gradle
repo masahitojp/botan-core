@@ -42,9 +42,9 @@ dependencies {
     compile('org.reflections:reflections:0.9.10') {
         exclude group: 'com.google.code.findbugs', module: 'annotations'
     }
-    compile 'io.netty:netty-all:4.0.33.Final'
+    compile 'io.netty:netty-codec-http:4.0.34.Final'
     compile 'tv.cntt:netty-router:2.0.0'
-    compile 'org.slf4j:slf4j-api:1.7.13'
+    compile 'org.slf4j:slf4j-api:1.7.14'
     testCompile 'ch.qos.logback:logback-classic:1.1.3'
     testCompile "junit:junit:4.12"
     testCompile "org.hamcrest:java-hamcrest:2.0.0.0"
