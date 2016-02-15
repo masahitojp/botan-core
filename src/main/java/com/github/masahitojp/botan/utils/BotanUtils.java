@@ -20,10 +20,7 @@ public final class BotanUtils {
         if(system.isPresent()) {
             return system;
         }
-        return Optional.ofNullable(System.getProperty(UpperUnderScoreToLowerDot(envName)));
+        return Optional.ofNullable(System.getProperty(envName));
     }
 
-    private static String UpperUnderScoreToLowerDot(final String src) {
-        return src.toLowerCase().replace("_", ".");
-    }
 }
