@@ -66,7 +66,7 @@ apply plugin: 'java'
 repositories.mavenCentral()
 
 dependencies {
-	compile compile 'com.github.masahitojp:botan:0.5.+'
+	compile 'com.github.masahitojp:botan-core:0.5.+'
 }
 
 sourceCompatibility = targetCompatibility = 1.8
