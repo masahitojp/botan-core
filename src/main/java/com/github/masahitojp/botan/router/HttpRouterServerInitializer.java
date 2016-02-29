@@ -6,16 +6,19 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.BadClientSilencer;
 import io.netty.handler.codec.http.router.Router;
 
+/**
+ *
+ */
 public class HttpRouterServerInitializer extends ChannelInitializer<SocketChannel> {
 	private final HttpRouterServerHandler handler;
-	private final BadClientSilencer       badClientSilencer = new BadClientSilencer();
+	private final BadClientSilencer badClientSilencer = new BadClientSilencer();
 
-	public HttpRouterServerInitializer(Router<Route> router) {
+	public HttpRouterServerInitializer(final Router<Route> router) {
 		handler = new HttpRouterServerHandler(router);
 	}
 
 	@Override
-	public void initChannel(SocketChannel ch) {
+	public void initChannel(final SocketChannel ch) {
 		ch.pipeline()
 				.addLast(new HttpServerCodec())
 				.addLast(handler)
