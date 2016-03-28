@@ -104,7 +104,7 @@ public final class SlackRTMAdapter implements BotanAdapter {
             if(user != null)slackSession = session.findChannelById(user.getId());
         }
         if (slackSession != null) {
-            session.sendMessageOverWebSocket(slackSession, message.getBody(), null);
+            session.sendMessageOverWebSocket(slackSession, message.getBody());
         } else {
             log.warn("reply failure {}", message.getTo());
         }
