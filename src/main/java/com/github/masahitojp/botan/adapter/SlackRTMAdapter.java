@@ -136,6 +136,10 @@ public final class SlackRTMAdapter implements BotanAdapter {
 
 
     public Optional<String> getFromAdapterName() {
-        return Optional.ofNullable(session.sessionPersona().getUserName());
+        if (session != null) {
+            return Optional.ofNullable(session.sessionPersona().getUserName());
+        } else {
+            return Optional.empty();
+        }
     }
 }
