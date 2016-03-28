@@ -10,15 +10,10 @@ import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 
+import com.github.masahitojp.botan.utils.BotanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Slf4j
@@ -36,19 +31,7 @@ public final class Botan {
     }
 
     static public void main(final String[] Args) {
-
-        // read .env file
-        final Path path = Paths.get(".env");
-        if(Files.exists(path)) {
-            try (final InputStream is = new FileInputStream(path.toFile())) {
-                final Properties p = new Properties();
-                p.load(is);
-                System.setProperties(p);
-            } catch (final IOException e) {
-                log.warn("[Botan] .env file ; {}", e);
-            }
-        }
-
+        BotanUtils.readDotEnv();
         final Botan botan = new Botan.BotanBuilder()
                 .build();
 
