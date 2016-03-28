@@ -5,7 +5,7 @@ apply plugin: 'idea'
 
 group = 'com.github.masahitojp'
 archivesBaseName = "botan-core"
-version = '0.6.0.0'
+version = '0.6.1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -96,7 +96,7 @@ uploadArchives {
                 name 'botan-core'
                 packaging 'jar'
                 // optionally artifactId can be defined here
-                description 'It is determined whether or not the haiku'
+                description 'tiny chat bot framework for Java SE 8.(like a Hubot)'
                 url 'https://github.com/masahitojp/botan-core'
 
                 scm {
