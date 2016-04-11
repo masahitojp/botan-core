@@ -44,8 +44,8 @@ dependencies {
     }
     compile 'io.netty:netty-codec-http:4.0.35.Final'
     compile 'tv.cntt:netty-router:2.0.0'
-    compile 'org.slf4j:slf4j-api:1.7.18'
-    testCompile 'ch.qos.logback:logback-classic:1.1.5'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    testCompile 'ch.qos.logback:logback-classic:1.1.7'
     testCompile "junit:junit:4.12"
     testCompile "org.hamcrest:java-hamcrest:2.0.0.0"
     testCompile "org.jmockit:jmockit:1.22"
