@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
 public class PingHandlersTest {
-    Botan botan;
+    private Botan botan;
     @Before
     public void startUp() throws BotanException {
         botan = new Botan.BotanBuilder()
@@ -46,6 +46,7 @@ public class PingHandlersTest {
         final AtomicInteger a = new AtomicInteger();
         MockUp<Consumer<BotanMessage>> spy = new MockUp<Consumer<BotanMessage>>(){
             @Mock
+            @SuppressWarnings("unused")
             public void accept(BotanMessage message) {
                 a.incrementAndGet();
             }
@@ -59,6 +60,7 @@ public class PingHandlersTest {
         final AtomicReference<String> a = new AtomicReference<>();
         new MockUp<BotanMessage>(){
             @Mock
+            @SuppressWarnings("unused")
             public void reply(String message) {
                 a.set(message);
             }

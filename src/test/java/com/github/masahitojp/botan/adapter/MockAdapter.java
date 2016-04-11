@@ -1,12 +1,10 @@
 package com.github.masahitojp.botan.adapter;
 
 import com.github.masahitojp.botan.Botan;
-import com.github.masahitojp.botan.adapter.BotanAdapter;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 
 public class MockAdapter implements BotanAdapter {
-    private Botan botan;
 
     @Override
     public void run() throws BotanException {
@@ -20,7 +18,6 @@ public class MockAdapter implements BotanAdapter {
 
     @Override
     public void initialize(Botan botan) {
-        this.botan = botan;
     }
 
     @Override
