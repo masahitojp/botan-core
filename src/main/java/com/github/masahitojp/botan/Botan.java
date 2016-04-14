@@ -11,6 +11,7 @@ import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 
 import com.github.masahitojp.botan.utils.BotanUtils;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
@@ -21,6 +22,7 @@ public final class Botan {
     public final BotanBrain brain;
     private String name;
     private final BotanAdapter adapter;
+    @Getter
     private final Robot robot;
 
     private Botan(final BotanBuilder builder) {
@@ -69,13 +71,11 @@ public final class Botan {
         adapter.initialize(this);
 
         // adapterはRunしたあとじゃないと名前がとれないことがあるため
-        if (adapter.getFromAdapterName().isPresent()) {
-            this.name = adapter.getFromAdapterName().get();
-        }
+        this.adapter.getFromAdapterName().ifPresent(x -> this.name = x);
         log.info("bot name : {}", this.name);
 
-        this.robot.run();
         adapter.run();
+        this.robot.run();
 
     }
 
@@ -151,9 +151,7 @@ public final class Botan {
                     last.ifPresent(adapter -> {
                         try {
                             this.adapter = adapter.newInstance();
-                            if (this.adapter.getFromAdapterName().isPresent()) {
-                                this.name = this.adapter.getFromAdapterName().get();
-                            }
+                            this.adapter.getFromAdapterName().ifPresent(x -> this.name = x);
                         } catch (InstantiationException | IllegalAccessException e) {
                             log.warn("{}", e);
                         }
