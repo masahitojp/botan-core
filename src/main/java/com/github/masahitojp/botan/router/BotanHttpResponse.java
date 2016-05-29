@@ -5,10 +5,12 @@ public class BotanHttpResponse {
 	private String _content = "";
 	private String _contentType = "text/plain";
 
+	@SuppressWarnings("unused")
 	public int status() {
 		return _status;
 	}
 
+	@SuppressWarnings("unused")
 	public BotanHttpResponse status(final int status) {
 		this._status = status;
 		return this;
@@ -18,6 +20,7 @@ public class BotanHttpResponse {
 		return _content;
 	}
 
+	@SuppressWarnings("unused")
 	public BotanHttpResponse content(final String content) {
 		this._content = content;
 		return this;
@@ -27,6 +30,7 @@ public class BotanHttpResponse {
 		return _contentType;
 	}
 
+	@SuppressWarnings("unused")
 	public BotanHttpResponse type(final String contentType) {
 		this._contentType = contentType;
 		return this;
