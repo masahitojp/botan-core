@@ -12,11 +12,11 @@ import io.netty.handler.codec.http.router.Router;
 import io.netty.util.CharsetUtil;
 
 @ChannelHandler.Sharable
-public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpObject> {
+class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpObject> {
 	private final Router<Route> router;
 	private HttpRequest request;
 	private final StringBuilder buf = new StringBuilder();
-	public HttpRouterServerHandler(Router<Route> router) {
+	HttpRouterServerHandler(Router<Route> router) {
 		this.router = router;
 	}
 
@@ -33,7 +33,7 @@ public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpObj
 	public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
 		if (msg instanceof HttpRequest) {
 			final HttpRequest request = this.request = (HttpRequest) msg;
-			if (HttpHeaders.is100ContinueExpected(request)) {
+			if (HttpUtil.is100ContinueExpected(request)) {
 				ctx.writeAndFlush(new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.CONTINUE));
 				return;
 			}
@@ -49,13 +49,13 @@ public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpObj
 
 			if (msg instanceof LastHttpContent) {
 				HttpResponse res = createResponse(request, router,buf.toString());
-				flushResponse(ctx, request, res);
+				flushResponse(ctx, res);
 			}
 		}
 	}
 
 	private static HttpResponse createResponse(HttpRequest req, Router<Route> router, String body) {
-		final RouteResult<Route> routeResult = router.route(req.getMethod(), req.getUri());
+		final RouteResult<Route> routeResult = router.route(req.method(), req.uri());
 		if (routeResult != null) {
 			final BotanHttpResponse res = new BotanHttpResponse();
 			final Object obj = routeResult.target().handle(new BotanHttpRequest(routeResult, body), res);
@@ -79,8 +79,8 @@ public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpObj
 					HttpVersion.HTTP_1_1, responseStatus,
 					Unpooled.copiedBuffer(content, CharsetUtil.UTF_8));
 
-			response.headers().set(HttpHeaders.Names.CONTENT_TYPE, type);
-			response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, response.content().readableBytes());
+			response.headers().set(HttpHeaderNames.CONTENT_TYPE, type);
+			response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
 			return response;
 		} else {
 			return new DefaultFullHttpResponse(
@@ -88,7 +88,7 @@ public class HttpRouterServerHandler extends SimpleChannelInboundHandler<HttpObj
 		}
 	}
 
-	private static void flushResponse(ChannelHandlerContext ctx, HttpRequest req, HttpResponse res) {
+	private static void flushResponse(ChannelHandlerContext ctx, HttpResponse res) {
 		ctx.write(res);
 		ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
 	}

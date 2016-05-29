@@ -32,8 +32,10 @@ public final class BotanUtils {
         return Optional.ofNullable(System.getProperty(envName));
     }
 
+    /**
+     * read .env file
+     */
     public static void readDotEnv() {
-        // read .env file
         final Path path = Paths.get(".env");
         if (Files.exists(path)) {
             try (final InputStream is = new FileInputStream(path.toFile())) {

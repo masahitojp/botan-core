@@ -11,9 +11,12 @@ public class BotanHttpRequest {
 		this.body = body;
 	}
 
+	@SuppressWarnings("unused")
 	public Optional<String> params(String key) {
 		return Optional.ofNullable(result.param(key));
 	}
+
+	@SuppressWarnings("unused")
 	public String body() {
 		return body;
 	}

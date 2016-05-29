@@ -16,13 +16,15 @@ import java.util.concurrent.Executors;
 
 @Slf4j
 public class BotanRouter {
-    protected final Map<String, Route> httpget = new HashMap<>();
-    protected final Map<String, Route> httppost = new HashMap<>();
-    final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Map<String, Route> httpget = new HashMap<>();
+    private final Map<String, Route> httppost = new HashMap<>();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    @SuppressWarnings("unused")
     public final void GET(String path, Route route) {
         httpget.put(path, route);
     }
+    @SuppressWarnings("unused")
     public final void POST(String path, Route route) {
         httppost.put(path, route);
     }

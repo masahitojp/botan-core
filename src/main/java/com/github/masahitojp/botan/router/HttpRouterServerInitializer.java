@@ -9,11 +9,11 @@ import io.netty.handler.codec.http.router.Router;
 /**
  *
  */
-public class HttpRouterServerInitializer extends ChannelInitializer<SocketChannel> {
+class HttpRouterServerInitializer extends ChannelInitializer<SocketChannel> {
 	private final HttpRouterServerHandler handler;
 	private final BadClientSilencer badClientSilencer = new BadClientSilencer();
 
-	public HttpRouterServerInitializer(final Router<Route> router) {
+	HttpRouterServerInitializer(final Router<Route> router) {
 		handler = new HttpRouterServerHandler(router);
 	}
 

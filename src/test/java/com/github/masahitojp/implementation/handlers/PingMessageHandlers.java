@@ -13,5 +13,6 @@ public class PingMessageHandlers implements BotanMessageHandlers {
                 "ping method",
                 message -> message.reply("pong")
         );
+        robot.router.GET("/", (req, resp) -> "Hello");
     }
 }

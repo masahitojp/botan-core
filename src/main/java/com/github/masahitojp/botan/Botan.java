@@ -74,8 +74,9 @@ public final class Botan {
         this.adapter.getFromAdapterName().ifPresent(x -> this.name = x);
         log.info("bot name : {}", this.name);
 
-        adapter.run();
+
         this.robot.run();
+        adapter.run();
 
     }
 
