@@ -42,7 +42,7 @@ dependencies {
     compile('org.reflections:reflections:0.9.10') {
         exclude group: 'com.google.code.findbugs', module: 'annotations'
     }
-    compile 'io.netty:netty-codec-http:4.1.0.Final'
+    compile 'io.netty:netty-codec-http:4.1.1.Final'
     compile 'tv.cntt:netty-router:2.0.0'
     compile 'org.slf4j:slf4j-api:1.7.21'
     testCompile 'ch.qos.logback:logback-classic:1.1.7'
