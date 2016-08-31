@@ -2,7 +2,8 @@
 
 [![Circle CI](https://circleci.com/gh/masahitojp/botan-core.svg?style=svg)](https://circleci.com/gh/masahitojp/botan-core)
 
-tiny chat bot framework for Java SE 8.(like a Hubot)
+![botan](images/botan.png)
+**Tiny chat bot framework for Java SE 8.(like a Hubot)**
 
 ## requirement
 
@@ -89,6 +90,10 @@ Currently, supports following adapters and brains:
 ## License
 
 Apache License, Version 2.0
+
+## Special Thanks
+
+* [@_pochi](https://twitter.com/_pochi) -san wrote a nice logo. Thanks!!
 
 ## Inspired projects
 
