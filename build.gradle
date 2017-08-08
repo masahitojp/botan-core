@@ -38,14 +38,14 @@ idea {
 
 dependencies {
     provided "org.projectlombok:lombok:1.16.+"
-    compile 'com.ullink.slack:simpleslackapi:0.6.0'
+    compile 'com.ullink.slack:simpleslackapi:1.0.0'
     compile('org.reflections:reflections:0.9.10') {
         exclude group: 'com.google.code.findbugs', module: 'annotations'
     }
-    compile 'io.netty:netty-codec-http:4.1.6.Final'
+    compile 'io.netty:netty-codec-http:4.1.14.Final'
     compile 'tv.cntt:netty-router:2.0.0'
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    testCompile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'org.slf4j:slf4j-api:1.7.25'
+    testCompile 'ch.qos.logback:logback-classic:1.2.3'
     testCompile "junit:junit:4.12"
     testCompile "org.hamcrest:java-hamcrest:2.0.0.0"
     testCompile "org.jmockit:jmockit:1.29"
