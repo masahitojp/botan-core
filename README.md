@@ -4,6 +4,9 @@
 
 [![Circle CI](https://circleci.com/gh/masahitojp/botan-core.svg?style=svg)](https://circleci.com/gh/masahitojp/botan-core)
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.masahitojp/botan-core//badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.masahitojp/botan-core)
+
+
 ![botan](images/botan.png)
 **Tiny chat bot framework for Java SE 8.(like a Hubot)**
 
