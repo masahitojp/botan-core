@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LocalBrainTest {
 
@@ -24,11 +25,11 @@ public class LocalBrainTest {
         val key = "test";
         val value = "test_abc";
 
-        assertEquals(data.getData().get(key), null);
-        assertEquals(data.getData().put(key, value), null);
+        assertNull(data.getData().get(key));
+        assertNull(data.getData().put(key, value));
         assertEquals(data.getData().get("test"), value);
         assertEquals(data.getData().remove("test"), value);
-        assertEquals(data.getData().get(key), null);
+        assertNull(data.getData().get(key));
     }
 
     @Test
