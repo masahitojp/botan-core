@@ -9,20 +9,19 @@ import com.github.masahitojp.botan.message.BotanMessageSimple;
 
 import mockit.Mock;
 import mockit.MockUp;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PingHandlersTest {
     private Botan botan;
-    @Before
+    @BeforeEach
     public void startUp() throws BotanException {
         botan = new Botan.BotanBuilder()
                 .setAdapter(new MockAdapter())
@@ -32,14 +31,14 @@ public class PingHandlersTest {
         botan.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         botan.stop();
     }
 
     @Test
     public void handlersRegistrationTest() {
-        assertThat(botan.getHandlers().size(), is(1));
+        assertEquals(botan.getHandlers().size(), 1);
     }
     @Test
     public void regexTest() {
@@ -53,7 +52,7 @@ public class PingHandlersTest {
         };
         botan.getHandlers().stream().filter(handler -> handler.getDescription().equals("ping method")).forEach(handler -> handler.setHandle(spy.getMockInstance()));
         botan.receive(new BotanMessageSimple("botan ping"));
-        assertThat(a.get(), is(1));
+        assertEquals(a.get(), 1);
     }
     @Test
     public void MessageTest() {
@@ -66,6 +65,6 @@ public class PingHandlersTest {
             }
         };
         botan.receive(new BotanMessageSimple("botan ping"));
-        assertThat(a.get(), is("pong"));
+        assertEquals(a.get(), "pong");
     }
 }

@@ -7,6 +7,9 @@ group = 'com.github.masahitojp'
 archivesBaseName = "botan-core"
 version = '0.6.4'
 
+ext.junitPlatformVersion = '1.0.0'
+ext.junitJupiterVersion  = '5.0.0'
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -16,6 +19,15 @@ tasks.withType(GroovyCompile)*.groovyOptions*.encoding = defaultEncoding
 
 def srcJava = 'src/main/java'
 def srcDelomboked = 'build/src-delomboked/main/java'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+    }
+}
 
 repositories {
     mavenCentral()
@@ -45,9 +57,15 @@ dependencies {
     compile 'io.netty:netty-codec-http:4.1.14.Final'
     compile 'tv.cntt:netty-router:2.2.0'
     compile 'org.slf4j:slf4j-api:1.7.25'
+    // JUnit Jupiter API and TestEngine implementation
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+
+    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
+    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+
     testCompile 'ch.qos.logback:logback-classic:1.2.3'
-    testCompile "junit:junit:4.12"
-    testCompile "org.hamcrest:java-hamcrest:2.0.0.0"
     testCompile "org.jmockit:jmockit:1.29"
 }
 

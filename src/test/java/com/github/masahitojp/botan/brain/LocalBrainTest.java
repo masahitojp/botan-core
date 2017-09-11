@@ -1,20 +1,20 @@
 package com.github.masahitojp.botan.brain;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LocalBrainTest {
 
     private BotanBrain data;
 
-    @Before
+    @BeforeEach
     public void startUp() {
         data = new LocalBrain();
     }
@@ -24,11 +24,11 @@ public class LocalBrainTest {
         val key = "test";
         val value = "test_abc";
 
-        assertThat(data.getData().get(key), is(nullValue()));
-        assertThat(data.getData().put(key, value), is(nullValue()));
-        assertThat(data.getData().get("test"), is(value));
-        assertThat(data.getData().remove("test"), is(value));
-        assertThat(data.getData().get(key), is(nullValue()));
+        assertEquals(data.getData().get(key), null);
+        assertEquals(data.getData().put(key, value), null);
+        assertEquals(data.getData().get("test"), value);
+        assertEquals(data.getData().remove("test"), value);
+        assertEquals(data.getData().get(key), null);
     }
 
     @Test
@@ -41,9 +41,8 @@ public class LocalBrainTest {
         data.getData().put("key", "value");
 
         final List<String> list = data.getData().keySet().stream().filter(x -> x.startsWith("test")).collect(Collectors.toList());
-        assertThat(list.size(), is(2));
-        assertThat(list.contains(key), is(true));
-
+        assertEquals(list.size(), 2);
+        assertTrue(list.contains(key));
     }
 
 }

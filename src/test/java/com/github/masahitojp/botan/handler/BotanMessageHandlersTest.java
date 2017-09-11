@@ -2,10 +2,9 @@ package com.github.masahitojp.botan.handler;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.adapter.ComandLineAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BotanMessageHandlersTest {
     @Test
@@ -15,7 +14,7 @@ public class BotanMessageHandlersTest {
         handler.setAllReceived(true);
         handler.setDescription("test");
         handler.setPattern("pattern");
-        assertThat(handler.toString(), is("> pattern - test"));
+        assertEquals(handler.toString(), "> pattern - test");
     }
 
 }
