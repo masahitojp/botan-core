@@ -5,8 +5,6 @@ machine:
 dependencies:
   cache_directories:
     - "~/.gradle"
-
-test:
   override:
     - ./gradlew dependencies
   pre:
