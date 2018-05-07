@@ -1,5 +1,5 @@
 version: 2
-shared: &shared
+jobs:
   build:
     working_directory: ~/masahitojp/botan-core
     parallelism: 1
@@ -10,7 +10,7 @@ shared: &shared
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
     docker:
-    - image: circleci/openjdk:8-jdk
+    - image: circleci/openjdk:9-jdk
     working_directory: ~/masahitojp/botan-core 
     steps:
     - checkout
@@ -42,13 +42,3 @@ shared: &shared
     - store_artifacts:
         path: /tmp/circleci-test-results
 
-jobs:
-  java-9:
-    docker:
-      - image: circleci/openjdk:9-jdk
-    <<: *shared
-
-  java-8:
-    docker:
-      - image: circleci/openjdk:8-jdk
-    <<: *shared
