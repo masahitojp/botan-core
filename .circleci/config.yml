@@ -4,6 +4,7 @@ workflows:
   test:
     jobs:
       - java-8
+      - java-9
 
 jobs:
   java-8: &test-template
@@ -45,4 +46,7 @@ jobs:
         path: /tmp/circleci-artifacts
     - store_artifacts:
         path: /tmp/circleci-test-results
-
+  java-9:
+    <<: *test-template
+    docker:
+      - image: circleci/openjdk:9-jdk
