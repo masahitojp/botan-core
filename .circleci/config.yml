@@ -54,16 +54,9 @@ jobs:
         paths:
         # This is a broad list of cache paths to include many possible development environments
         # You can probably delete some of these entries
-        - vendor/bundle
-        - ~/virtualenvs
-        - ~/.m2
-        - ~/.ivy2
-        - ~/.bundle
-        - ~/.go_workspace
-        - ~/.gradle
-        - ~/.cache/bower
-        # These cache paths were specified in the 1.0 config
-        - ~/.gradle
+        - ~/masahitojp/.m2
+        - ~/masahitojp/.ivy2
+        - ~/masahitojp/.gradle
     # Test
     #   This would typically be a build job when using workflows, possibly combined with build
     # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
