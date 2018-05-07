@@ -1,5 +1,6 @@
 version: 2
 shared: &shared
+  build:
     working_directory: ~/masahitojp/botan-core
     parallelism: 1
     shell: /bin/bash --login
