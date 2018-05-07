@@ -3,7 +3,7 @@ workflows:
   version: 2
   test:
     jobs:
-      - java8
+      - java-8
 
 jobs:
   java-8: &test-template
