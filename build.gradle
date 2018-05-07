@@ -50,7 +50,7 @@ idea {
 
 dependencies {
     provided "org.projectlombok:lombok:1.16.+"
-    compile 'com.ullink.slack:simpleslackapi:1.0.0'
+    compile 'com.ullink.slack:simpleslackapi:1.2.0'
     compile('org.reflections:reflections:0.9.10') {
         exclude group: 'com.google.code.findbugs', module: 'annotations'
     }
