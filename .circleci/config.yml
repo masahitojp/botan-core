@@ -21,12 +21,12 @@ jobs:
     # This is based on your 1.0 configuration file or project settings
     - run: cp gradle.properties.sample gradle.properties
     - restore_cache:
-        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "build.gradle" }}
     # This is based on your 1.0 configuration file or project settings
     - run: ./gradlew dependencies
     # Save dependency cache
     - save_cache:
-        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "build.gradle" }}
         paths:
         - ~/masahitojp/botan-core/.gradle
     # Test
