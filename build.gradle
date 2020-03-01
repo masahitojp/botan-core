@@ -59,7 +59,7 @@ dependencies {
     testAnnotationProcessor( "org.projectlombok:lombok:1.18.+")
 
     compile 'com.ullink.slack:simpleslackapi:1.2.0'
-    compile('org.reflections:reflections:0.9.10') {
+    compile('org.reflections:reflections:0.9.12') {
         exclude group: 'com.google.code.findbugs', module: 'annotations'
     }
     compile 'io.netty:netty-codec-http:4.1.46.Final'
