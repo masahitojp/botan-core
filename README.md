@@ -6,6 +6,7 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.masahitojp/botan-core//badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.masahitojp/botan-core)
 
+[![Known Vulnerabilities](https://snyk.io/test/github/masahitojp/botan-core/badge.svg?targetFile=build.gradle)](https://snyk.io/test/github/masahitojp/botan-core?targetFile=build.gradle)
 
 ![botan](images/botan.png)
 **Tiny chat bot framework for Java SE 8.(like a Hubot)**
