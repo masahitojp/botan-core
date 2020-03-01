@@ -23,9 +23,11 @@ def srcDelomboked = 'build/src-delomboked/main/java'
 buildscript {
     repositories {
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.21'
     }
 }
 
@@ -35,6 +37,7 @@ repositories {
 configurations {
     provided
 }
+apply plugin: "net.ltgt.apt"
 
 sourceSets {
     main.compileClasspath += configurations.provided
@@ -49,7 +52,8 @@ idea {
 }
 
 dependencies {
-    provided "org.projectlombok:lombok:1.16.+"
+    compileOnly( "org.projectlombok:lombok:1.18.+")
+    annotationProcessor( "org.projectlombok:lombok:1.18.+")
     compile 'com.ullink.slack:simpleslackapi:1.2.0'
     compile('org.reflections:reflections:0.9.10') {
         exclude group: 'com.google.code.findbugs', module: 'annotations'
