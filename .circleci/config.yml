@@ -52,5 +52,5 @@ jobs:
   java-13:
     <<: *test-template
     docker:
-      - image: circleci/openjdk:13-jdk
+      - image: circleci/openjdk:13.0.2
 
